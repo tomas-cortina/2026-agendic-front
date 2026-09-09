@@ -292,10 +292,10 @@ function Hero() {
           Organizá tu agenda, reducí las ausencias y dejá de atender turnos por WhatsApp.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <Button asChild size="lg" className={btnLg}>
+          <Button asChild className={btnLg}>
             <a href="#">Empezá gratis</a>
           </Button>
-          <Button asChild variant="outline" size="lg" className={btnLg}>
+          <Button asChild variant="outline" className={btnLg}>
             <a href="#funcionalidades">Ver funcionalidades</a>
           </Button>
         </div>
@@ -348,7 +348,9 @@ function Features() {
               <span className="mb-3 grid size-10 place-items-center rounded-lg bg-primary/10 text-primary">
                 <p.icon className="size-5" />
               </span>
-              <CardTitle className="text-xl font-semibold">{p.title}</CardTitle>
+              <CardTitle className="text-xl font-semibold">
+                <h3>{p.title}</h3>
+              </CardTitle>
               <CardDescription className="text-base">{p.tagline}</CardDescription>
             </CardHeader>
             <CardContent>
@@ -373,7 +375,9 @@ function TurnoCardMockup() {
     <Card className="mx-auto w-full max-w-xs rounded-[2rem] border-8 border-foreground/10 shadow-xl shadow-foreground/5 [--card-spacing:--spacing(5)]">
       <CardHeader>
         <p className="text-xs font-medium text-primary">Próximo turno</p>
-        <CardTitle className="text-lg font-semibold">Corte y barba</CardTitle>
+        <CardTitle className="text-lg font-semibold">
+          <h3>Corte y barba</h3>
+        </CardTitle>
         <CardDescription>Barbería Roma · Sucursal Centro</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
@@ -484,8 +488,7 @@ function FinalCta() {
         </p>
         <Button
           asChild
-          size="lg"
-          className={`${btnLg} mt-8 bg-white text-primary hover:bg-white/90`}
+          className={`${btnLg} mt-8 bg-primary-foreground text-primary hover:bg-primary-foreground/90`}
         >
           <a href="#">Crear cuenta gratis</a>
         </Button>
