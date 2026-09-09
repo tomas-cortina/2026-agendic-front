@@ -43,6 +43,10 @@ _Avoid_: cita, reserva (como sustantivo), appointment
 Acción del Cliente de tomar un turno disponible.
 _Avoid_: agendar, sacar turno, pedir turno
 
+**Reagendar**:
+Mover un turno existente a otro horario. Libera el horario anterior.
+_Avoid_: reprogramar, cambiar el turno
+
 **Ausencia**:
 Turno al que el Cliente no se presentó sin cancelarlo.
 _Avoid_: inasistencia, no-show

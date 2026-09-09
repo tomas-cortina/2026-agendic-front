@@ -21,7 +21,7 @@ const PILARES = [
     title: "Agenda online",
     tagline: "Tu disponibilidad, siempre actualizada.",
     bullets: [
-      "Reservas 24/7 por tu link público",
+      "Tus clientes reservan 24/7 por tu link público",
       "Varias sucursales, cada una con sus horarios",
       "Varios profesionales, cada uno con su agenda",
       "Horarios, feriados y bloqueos manuales",
@@ -53,7 +53,7 @@ const PILARES = [
   },
 ] as const;
 
-const CLIENTES = [
+const PARA_CLIENTES = [
   "Reservan por tu link, sin llamarte",
   "Reciben la confirmación de reserva y los recordatorios",
   "Confirman asistencia, reagendan o cancelan desde la app",
@@ -73,7 +73,7 @@ const BENEFICIOS = [
   {
     icon: "calendar",
     title: "Agenda siempre al día",
-    body: "Cada reserva, cambio o cancelación se refleja al instante en todas tus sucursales.",
+    body: "Cada turno nuevo, cambio o cancelación se refleja al instante en todas tus sucursales.",
   },
 ] as const;
 
@@ -104,26 +104,34 @@ const FAQ = [
   },
 ];
 
-// Mockup de agenda: 8 filas de media hora (9:00–13:00), 3 profesionales.
-const PROFESIONALES = ["Martín", "Lucía", "Sofía"];
+// Mockup de agenda semanal: 8 filas de media hora (9:00–13:00), color por profesional.
+const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie"];
 const HORAS = ["9:00", "10:00", "11:00", "12:00"];
+const PROFESIONALES = [
+  { name: "Martín", color: "bg-primary/15 border-primary" },
+  { name: "Lucía", color: "bg-accent/15 border-accent" },
+  { name: "Sofía", color: "bg-ink/10 border-ink-muted" },
+];
+// row: medias horas desde las 9:00; dia y pro: índices en DIAS y PROFESIONALES.
 const TURNOS = [
-  { pro: 0, row: 1, span: 2, label: "Corte y barba" },
-  { pro: 0, row: 4, span: 1, label: "Corte" },
-  { pro: 0, row: 6, span: 2, label: "Color" },
-  { pro: 1, row: 2, span: 2, label: "Corte y barba" },
-  { pro: 1, row: 5, span: 1, label: "Afeitado" },
-  { pro: 1, row: 7, span: 2, label: "Corte y barba" },
-  { pro: 2, row: 1, span: 1, label: "Corte" },
-  { pro: 2, row: 3, span: 2, label: "Color" },
-  { pro: 2, row: 6, span: 1, label: "Corte" },
-  { pro: 2, row: 8, span: 1, label: "Afeitado" },
+  { dia: 0, pro: 0, row: 0, span: 2, label: "Corte y barba" },
+  { dia: 0, pro: 1, row: 3, span: 1, label: "Corte" },
+  { dia: 0, pro: 2, row: 6, span: 2, label: "Color" },
+  { dia: 1, pro: 1, row: 1, span: 2, label: "Corte y barba" },
+  { dia: 1, pro: 0, row: 4, span: 1, label: "Afeitado" },
+  { dia: 1, pro: 2, row: 6, span: 1, label: "Corte" },
+  { dia: 2, pro: 2, row: 0, span: 1, label: "Corte" },
+  { dia: 2, pro: 0, row: 2, span: 2, label: "Color" },
+  { dia: 2, pro: 1, row: 5, span: 2, label: "Corte y barba" },
+  { dia: 3, pro: 0, row: 1, span: 1, label: "Corte" },
+  { dia: 3, pro: 2, row: 3, span: 2, label: "Corte y barba" },
+  { dia: 3, pro: 1, row: 7, span: 1, label: "Afeitado" },
+  { dia: 4, pro: 1, row: 0, span: 2, label: "Color" },
+  { dia: 4, pro: 2, row: 4, span: 1, label: "Corte" },
+  { dia: 4, pro: 0, row: 5, span: 2, label: "Corte y barba" },
 ];
-const TURNO_COLOR = [
-  "bg-primary/15 border-primary",
-  "bg-accent/15 border-accent",
-  "bg-ink/10 border-ink-muted",
-];
+// La fila 1 de la grilla es la cabecera con los días.
+const gridRow = (row: number, span: number) => `${row + 2} / span ${span}`;
 
 const ICONS = {
   calendar: (
@@ -193,25 +201,37 @@ function Wordmark() {
   );
 }
 
+function NavLinks() {
+  return NAV.map((item) => (
+    <a key={item.href} href={item.href} className="py-1 hover:text-primary">
+      {item.label}
+    </a>
+  ));
+}
+
+function AuthLinks() {
+  return (
+    <>
+      <a href="#" className={btnSecondary}>
+        Ir a mi cuenta
+      </a>
+      <a href="#" className={btnPrimary}>
+        Empezá gratis
+      </a>
+    </>
+  );
+}
+
 function Nav() {
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-background/90 backdrop-blur">
       <div className={`${container} relative flex h-16 items-center justify-between`}>
         <Wordmark />
         <nav className="hidden items-center gap-8 text-sm md:flex">
-          {NAV.map((item) => (
-            <a key={item.href} href={item.href} className="hover:text-primary">
-              {item.label}
-            </a>
-          ))}
+          <NavLinks />
         </nav>
         <div className="hidden items-center gap-3 md:flex">
-          <a href="#" className={btnSecondary}>
-            Ir a mi cuenta
-          </a>
-          <a href="#" className={btnPrimary}>
-            Empezá gratis
-          </a>
+          <AuthLinks />
         </div>
         <details className="group md:hidden">
           <summary className="cursor-pointer list-none rounded-lg p-2 hover:bg-tint [&::-webkit-details-marker]:hidden">
@@ -220,17 +240,8 @@ function Nav() {
             <span className="sr-only">Menú</span>
           </summary>
           <div className="absolute inset-x-0 top-full flex flex-col gap-3 border-b border-line bg-background p-6">
-            {NAV.map((item) => (
-              <a key={item.href} href={item.href} className="py-1">
-                {item.label}
-              </a>
-            ))}
-            <a href="#" className={btnSecondary}>
-              Ir a mi cuenta
-            </a>
-            <a href="#" className={btnPrimary}>
-              Empezá gratis
-            </a>
+            <NavLinks />
+            <AuthLinks />
           </div>
         </details>
       </div>
@@ -245,29 +256,29 @@ function AgendaMockup() {
         <span className="font-medium">
           Barbería Roma · <span className="text-ink-muted">Sucursal Centro</span>
         </span>
-        <span className="text-ink-muted">jue 12 sep</span>
+        <span className="text-ink-muted">9 – 13 sep</span>
       </div>
-      <div className="grid grid-cols-[2.5rem_repeat(3,1fr)] grid-rows-[auto_repeat(8,1.5rem)] text-xs">
+      <div className="grid grid-cols-[2.5rem_repeat(5,1fr)] grid-rows-[auto_repeat(8,1.5rem)] text-xs">
         <div />
-        {PROFESIONALES.map((pro) => (
-          <div key={pro} className="pb-2 text-center font-medium">
-            {pro}
+        {DIAS.map((dia) => (
+          <div key={dia} className="pb-2 text-center font-medium">
+            {dia}
           </div>
         ))}
         {HORAS.map((hora, h) => (
           <div
             key={hora}
-            style={{ gridColumn: 1, gridRow: `${h * 2 + 2} / span 2` }}
+            style={{ gridColumn: 1, gridRow: gridRow(h * 2, 2) }}
             className="-mt-2 text-[10px] text-ink-muted"
           >
             {hora}
           </div>
         ))}
         {HORAS.map((hora, h) =>
-          PROFESIONALES.map((pro, p) => (
+          DIAS.map((dia, d) => (
             <div
-              key={`${hora}-${pro}`}
-              style={{ gridColumn: p + 2, gridRow: `${h * 2 + 2} / span 2` }}
+              key={`${hora}-${dia}`}
+              style={{ gridColumn: d + 2, gridRow: gridRow(h * 2, 2) }}
               className="border-t border-line"
             />
           )),
@@ -275,13 +286,21 @@ function AgendaMockup() {
         {TURNOS.map((t, i) => (
           <div
             key={i}
-            style={{ gridColumn: t.pro + 2, gridRow: `${t.row + 1} / span ${t.span}` }}
-            className={`z-10 m-0.5 truncate rounded-md border-l-2 px-2 py-0.5 leading-5 ${TURNO_COLOR[t.pro]}`}
+            style={{ gridColumn: t.dia + 2, gridRow: gridRow(t.row, t.span) }}
+            className={`z-10 m-0.5 truncate rounded-md border-l-2 px-1.5 py-0.5 leading-5 ${PROFESIONALES[t.pro].color}`}
           >
             {t.label}
           </div>
         ))}
       </div>
+      <ul className="mt-3 flex gap-4 text-[10px] text-ink-muted">
+        {PROFESIONALES.map((p) => (
+          <li key={p.name} className="flex items-center gap-1.5">
+            <span className={`size-2.5 rounded-full border-2 ${p.color}`} />
+            {p.name}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -316,7 +335,7 @@ function Hero() {
   );
 }
 
-function Rubros() {
+function Industries() {
   return (
     <section id="rubros" className="scroll-mt-16 bg-tint py-20">
       <div className={container}>
@@ -344,11 +363,11 @@ function Rubros() {
   );
 }
 
-function Funcionalidades() {
+function Features() {
   return (
     <section id="funcionalidades" className={`${container} scroll-mt-16 py-20`}>
       <h2 className="text-center text-3xl font-bold tracking-tight">
-        Todo lo que necesitás para dejar de agendar a mano
+        Todo lo que necesitás para dejar de anotar turnos a mano
       </h2>
       <div className="mt-12 grid gap-6 md:grid-cols-3">
         {PILARES.map((p) => (
@@ -383,7 +402,7 @@ function TurnoCardMockup() {
         jue 12 sep · <span className="font-medium">15:30</span> · con Martín
       </p>
       <span className="mt-3 inline-block rounded-full bg-tint px-2.5 py-1 text-xs text-ink-muted">
-        Pendiente de confirmación
+        Asistencia sin confirmar
       </span>
       <div className="mt-5 flex flex-col gap-2">
         <span className={`${btnPrimary} w-full`}>Confirmar asistencia</span>
@@ -396,7 +415,7 @@ function TurnoCardMockup() {
   );
 }
 
-function Clientes() {
+function ForCustomers() {
   return (
     <section className="bg-tint py-20">
       <div className={`${container} grid items-center gap-12 lg:grid-cols-2`}>
@@ -409,7 +428,7 @@ function Clientes() {
             Si no puede ir, reagenda o cancela desde la app y el turno vuelve a estar disponible.
           </p>
           <ul className="mt-6 space-y-3">
-            {CLIENTES.map((c) => (
+            {PARA_CLIENTES.map((c) => (
               <li key={c} className="flex gap-3">
                 <Icon name="check" className="mt-0.5 size-5 shrink-0 text-accent" />
                 {c}
@@ -423,14 +442,14 @@ function Clientes() {
   );
 }
 
-function Beneficios() {
+function Benefits() {
   return (
     <section className={`${container} py-20`}>
       <h2 className="text-center text-3xl font-bold tracking-tight">
         Menos trabajo manual, más turnos atendidos
       </h2>
       <p className="mx-auto mt-3 max-w-xl text-center text-ink-muted">
-        Agendar por teléfono, WhatsApp o papel cuesta horas y termina en huecos en la agenda.
+        Tomar turnos por teléfono, WhatsApp o papel cuesta horas y termina en huecos en la agenda.
         Agendic lo hace solo.
       </p>
       <div className="mt-12 grid gap-8 md:grid-cols-3">
@@ -472,7 +491,7 @@ function Faq() {
   );
 }
 
-function CtaFinal() {
+function FinalCta() {
   return (
     <section className="bg-primary py-20 text-white">
       <div className={`${container} text-center`}>
@@ -538,12 +557,12 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
-        <Rubros />
-        <Funcionalidades />
-        <Clientes />
-        <Beneficios />
+        <Industries />
+        <Features />
+        <ForCustomers />
+        <Benefits />
         <Faq />
-        <CtaFinal />
+        <FinalCta />
       </main>
       <Footer />
     </>
