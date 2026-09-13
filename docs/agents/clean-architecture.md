@@ -1,23 +1,23 @@
 # Clean Architecture
 
-Normative rules for every file under `app/`, `src/`, `di/`, `tests/`. This is a digest of `clean-architecture-guidelines.md` at the repo root; that file is the authority and is cited by section (§) below. Open the cited section when a rule here is ambiguous or you need the worked example.
+Normative rules for every file under `app/`, `src/`, `di/`, `tests/`.
 
 ## Adding a feature: inside-out
 
-Work from the innermost layer outward. Each step compiles and is testable before the next exists. The feature is done when every step's check holds (§14).
+Work from the innermost layer outward. Each step compiles and is testable before the next exists. The feature is done when every step's check holds.
 
 0. **Boundary.** One user-facing operation → one controller. Split it into atomic business operations → one use case each. List the external capabilities needed → ports; reuse existing ports first.
-1. **Entities** in `src/entities/`. One Zod schema plus inferred type per model; insert/create variants derived with `pick`/`omit`/`merge`. One error class per outcome an outer layer reacts to differently, constructor `(message, options?: ErrorOptions)`. Check: the file carries no persistence, transport, or UI concern (§5.1).
-2. **Ports** in `src/application/repositories/` and `src/application/services/`. `interface I<Name>Repository` / `I<Name>Service`; signatures use only entities types and primitives. Check: contract written, nothing implemented yet (§5.2.1).
-3. **Use case** at `src/application/use-cases/<feature>/<verb>-<noun>.use-case.ts`. Check: curried, one operation, authorization inside (throws `UnauthorizedError`), receives an already-verified `userId`, parses no input shape, returns an entity, `tx?` last, exports `I<Verb><Noun>UseCase = ReturnType<typeof …>` (§5.2.2).
-4. **Adapters** in `src/infrastructure/`. Mock first (`.mock.ts`, in-memory, throws the same entities errors), then the real adapter. A class implementing exactly one port, dependencies via constructor, vendor errors translated to entities errors with `{ cause }`. Check: both files exist (§5.3, §13).
-5. **Controller + presenter** at `src/interface-adapters/controllers/<feature>/<verb>-<noun>.controller.ts`. Body order: authenticate (`UnauthenticatedError`) → `inputSchema.safeParse` (`InputParseError` with `cause`) → compose use cases, inside a transaction when several writes → `presenter()` whitelisting fields. Check: return type is `ReturnType<typeof presenter>`, exports `I<Verb><Noun>Controller` (§5.4, §9).
-6. **Register** in `di/types.ts` (`DI_SYMBOLS` and `DI_RETURN_TYPES`, same `I`-prefixed key, `Symbol.for(key)`) and `di/modules/<feature>.module.ts` (`toHigherOrderFunction`, dependency list in parameter order; adapter bindings branch on `NODE_ENV === 'test'` → mock). Check: `getInjection('I…Controller')` type-checks (§6).
-7. **Unit tests** at `tests/unit/<mirrored src path>/<same>.test.ts`, subjects resolved via `getInjection`. Controller file: happy path, one case per `InputParseError` scenario, unauthenticated. Use-case file: happy path plus every authorization and not-found branch. Check: `npm test` green with no database or network (§13).
-8. **Entry point** in `app/` (server action, route handler, server component): `getInjection('I…Controller')`, pass raw input and session id, branch with `instanceof` on each entities error → response, report the rest through `ICrashReporterService` and return a generic message. Cookies, redirects, revalidation live here only (§5.5, §10).
-9. **Lint.** `npm run lint` passes with zero boundary violations. A violation means the code sits in the wrong layer: move it (§12).
+1. **Entities** in `src/entities/`. One Zod schema plus inferred type per model; insert/create variants derived with `pick`/`omit`/`merge`. One error class per outcome an outer layer reacts to differently, constructor `(message, options?: ErrorOptions)`. Check: the file carries no persistence, transport, or UI concern.
+2. **Ports** in `src/application/repositories/` and `src/application/services/`. `interface I<Name>Repository` / `I<Name>Service`; signatures use only entities types and primitives. Check: contract written, nothing implemented yet.
+3. **Use case** at `src/application/use-cases/<feature>/<verb>-<noun>.use-case.ts`. Check: curried, one operation, authorization inside (throws `UnauthorizedError`), receives an already-verified `userId`, parses no input shape, returns an entity, `tx?` last, exports `I<Verb><Noun>UseCase = ReturnType<typeof …>`.
+4. **Adapters** in `src/infrastructure/`. Mock first (`.mock.ts`, in-memory, throws the same entities errors), then the real adapter. A class implementing exactly one port, dependencies via constructor, vendor errors translated to entities errors with `{ cause }`. Check: both files exist.
+5. **Controller + presenter** at `src/interface-adapters/controllers/<feature>/<verb>-<noun>.controller.ts`. Body order: authenticate (`UnauthenticatedError`) → `inputSchema.safeParse` (`InputParseError` with `cause`) → compose use cases, inside a transaction when several writes → `presenter()` whitelisting fields. Check: return type is `ReturnType<typeof presenter>`, exports `I<Verb><Noun>Controller`.
+6. **Register** in `di/types.ts` (`DI_SYMBOLS` and `DI_RETURN_TYPES`, same `I`-prefixed key, `Symbol.for(key)`) and `di/modules/<feature>.module.ts` (`toHigherOrderFunction`, dependency list in parameter order; adapter bindings branch on `NODE_ENV === 'test'` → mock). Check: `getInjection('I…Controller')` type-checks.
+7. **Unit tests** at `tests/unit/<mirrored src path>/<same>.test.ts`, subjects resolved via `getInjection`. Controller file: happy path, one case per `InputParseError` scenario, unauthenticated. Use-case file: happy path plus every authorization and not-found branch. Check: `npm test` green with no database or network.
+8. **Entry point** in `app/` (server action, route handler, server component): `getInjection('I…Controller')`, pass raw input and session id, branch with `instanceof` on each entities error → response, report the rest through `ICrashReporterService` and return a generic message. Cookies, redirects, revalidation live here only.
+9. **Lint.** `npm run lint` passes with zero boundary violations. A violation means the code sits in the wrong layer: move it.
 
-## Import map (§3)
+## Import map
 
 Dependencies point inward. Anything not listed is forbidden and lint-enforced.
 
@@ -31,9 +31,9 @@ Dependencies point inward. Anything not listed is forbidden and lint-enforced.
 | `app/` | `entities`, `di/` |
 | `di/` | everything except `app/` |
 
-Core (`entities` + `application`) stays free of framework, ORM, SDK, HTTP-client, and UI imports. Ports are the only door to the outside: database, HTTP API, auth, email, monitoring, transactions, storage, queues (§3.1).
+Core (`entities` + `application`) stays free of framework, ORM, SDK, HTTP-client, and UI imports. Ports are the only door to the outside: database, HTTP API, auth, email, monitoring, transactions, storage, queues.
 
-## Naming (§4)
+## Naming
 
 Kebab-case files with a role suffix; `tests/unit/` mirrors `src/` path for path.
 
@@ -48,7 +48,7 @@ Kebab-case files with a role suffix; `tests/unit/` mirrors `src/` path for path.
 | Mock | `<same>.mock.ts` | `class Mock<Same>` |
 | DI module | `di/modules/<feature>.module.ts` | `function create<Feature>Module()` |
 
-## Shapes (§7)
+## Shapes
 
 Use cases and controllers are curried arrow functions, `const`, no classes, no decorators. Dependency order: instrumentation → domain services → repositories → use cases. Consumers only ever see the inner function.
 
@@ -87,7 +87,7 @@ export const archiveTodoController =
 
 Infrastructure adapters are the contrast: classes with constructor injection, `implements` one port, writes take `tx?` and use `tx ?? db`.
 
-## Errors (§10)
+## Errors
 
 Errors are the core's outward API. Inner layers throw entities error classes with `{ cause }` when wrapping; the framework layer alone turns them into responses, by `instanceof`.
 
@@ -98,11 +98,11 @@ Errors are the core's outward API. Inner layers throw entities error classes wit
 | Controller | `UnauthenticatedError`, `InputParseError` | only to roll back a transaction |
 | `app/` | nothing domain-specific | every entities error it can handle; reports the rest with a generic message |
 
-## Cross-cutting (§11)
+## Cross-cutting
 
 Instrumentation, crash reporting, and transactions are ports too (`IInstrumentationService`, `ICrashReporterService`, `ITransactionManagerService`). `startSpan` wraps every use case, controller, presenter, and repository method, named `'<name> Use Case'`, `'<name> Controller'`, `'<name> Presenter'`, `'<Repo> > <method>'`. Transaction handles cross into the core typed as the abstract `ITransaction` from entities.
 
-## Where does this go (§15)
+## Where does this go
 
 | I need to… | Layer |
 |---|---|
@@ -123,4 +123,4 @@ Instrumentation, crash reporting, and transactions are ports too (`IInstrumentat
 
 ## Tooling in this repo
 
-The rules are mandatory; the tools are the reference stack and are installed on first use: `zod` (schemas), `jest` via `next/jest` (unit tests; jest sets `NODE_ENV=test` itself), `@evyweb/ioctopus` (decorator-free container, §6.7), `eslint-plugin-boundaries` with the deny-by-default config from §12. The `@/` alias already resolves to the repo root, so `@/src/…` and `@/di/…` work as written.
+The rules are mandatory; the tools are the reference stack and are installed on first use: `zod` (schemas), `jest` via `next/jest` (unit tests; jest sets `NODE_ENV=test` itself), `@evyweb/ioctopus` (decorator-free container), `eslint-plugin-boundaries` with a deny-by-default config. The `@/` alias already resolves to the repo root, so `@/src/…` and `@/di/…` work as written.
