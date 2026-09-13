@@ -33,7 +33,7 @@ export function Header() {
                     variant="ghost"
                     className="text-[15px] font-semibold text-foreground px-4 py-2.5 hover:text-primary transition-colors h-auto"
                 >
-                    <Link href="#">Ir a mi cuenta</Link>
+                    <Link href="/login">Ir a mi cuenta</Link>
                 </Button>
                 <Button
                     asChild
