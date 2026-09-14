@@ -1,3 +1,7 @@
+---
+status: partially superseded by 2026-agendic-back ADR 0002 (the back owns Usuario; the front's UsersRepository becomes an HTTP adapter to the back)
+---
+
 # In-memory auth with hand-rolled sessions
 
 Sign-up and sign-in follow nikolovlazar/nextjs-clean-architecture, with three deliberate deviations. There is no database yet, so Usuarios live in `MockUsersRepository` in every environment and sessions in a `Map` inside `AuthenticationService`; everything is lost on server restart. Lucia is not used (its author deprecated it in favour of hand-rolled sessions): a session is a random id in an httpOnly cookie that `app/` sets. Users are identified by email, not username, to fit the existing sign-up wizard. Passwords are hashed with bcrypt-ts. Google/Microsoft sign-in is out of scope.
