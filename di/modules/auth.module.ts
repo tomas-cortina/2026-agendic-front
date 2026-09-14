@@ -1,5 +1,6 @@
 import { createModule } from '@evyweb/ioctopus';
 import { DI_SYMBOLS } from '@/di/types';
+import { getCurrentUserUseCase } from '@/src/application/use-cases/auth/get-current-user.use-case';
 import { resolveSignUpMethodUseCase } from '@/src/application/use-cases/auth/resolve-sign-up-method.use-case';
 import { signInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
 import { signOutUseCase } from '@/src/application/use-cases/auth/sign-out.use-case';
@@ -52,6 +53,10 @@ export function createAuthModule() {
         .toHigherOrderFunction(signOutUseCase, [DI_SYMBOLS.IInstrumentationService, DI_SYMBOLS.IAuthenticationService]);
 
     authModule
+        .bind(DI_SYMBOLS.IGetCurrentUserUseCase)
+        .toHigherOrderFunction(getCurrentUserUseCase, [DI_SYMBOLS.IInstrumentationService, DI_SYMBOLS.IUsersRepository]);
+
+    authModule
         .bind(DI_SYMBOLS.IResolveSignUpMethodController)
         .toHigherOrderFunction(resolveSignUpMethodController, [
             DI_SYMBOLS.IInstrumentationService,
@@ -71,6 +76,7 @@ export function createAuthModule() {
         .toHigherOrderFunction(getCurrentUserController, [
             DI_SYMBOLS.IInstrumentationService,
             DI_SYMBOLS.IAuthenticationService,
+            DI_SYMBOLS.IGetCurrentUserUseCase,
         ]);
 
     authModule

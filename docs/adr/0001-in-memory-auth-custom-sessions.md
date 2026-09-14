@@ -13,6 +13,4 @@ This feature includes sign-out and a minimal "is this session still valid" check
 ## Consequences
 
 - When a database lands: write a real `UsersRepository` plus a sessions table, and bind `MockUsersRepository` only under `NODE_ENV === 'test'`.
-- Route protection (redirecting unauthenticated visitors away from pages that require a Usuario) is not implemented; add it, along with `proxy.ts`, when the first such page exists.
 - When OAuth ships, restore the domain→Proveedor de identidad mapping in `resolveSignUpMethodUseCase`; the routing UI it feeds is already in place.
-- `getCurrentUserController` calls `validateSession` with no use case, a deliberate break of the controller→use-case rule in `docs/agents/clean-architecture.md` (marked `ponytail:` in the file). When route protection lands (`.scratch/sign-up-sign-in/issues/04-route-protection.md`), move the lookup into a `getCurrentUserUseCase` and drop this bullet.

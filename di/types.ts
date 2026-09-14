@@ -2,6 +2,7 @@ import type { IUsersRepository } from '@/src/application/repositories/users.repo
 import type { IAuthenticationService } from '@/src/application/services/authentication.service.interface';
 import type { ICrashReporterService } from '@/src/application/services/crash-reporter.service.interface';
 import type { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
+import type { IGetCurrentUserUseCase } from '@/src/application/use-cases/auth/get-current-user.use-case';
 import type { IResolveSignUpMethodUseCase } from '@/src/application/use-cases/auth/resolve-sign-up-method.use-case';
 import type { ISignInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
 import type { ISignOutUseCase } from '@/src/application/use-cases/auth/sign-out.use-case';
@@ -26,6 +27,7 @@ export const DI_SYMBOLS = {
     ISignUpUseCase: Symbol.for('ISignUpUseCase'),
     ISignInUseCase: Symbol.for('ISignInUseCase'),
     ISignOutUseCase: Symbol.for('ISignOutUseCase'),
+    IGetCurrentUserUseCase: Symbol.for('IGetCurrentUserUseCase'),
 
     // Controllers
     IResolveSignUpMethodController: Symbol.for('IResolveSignUpMethodController'),
@@ -49,6 +51,7 @@ export interface DI_RETURN_TYPES {
     ISignUpUseCase: ISignUpUseCase;
     ISignInUseCase: ISignInUseCase;
     ISignOutUseCase: ISignOutUseCase;
+    IGetCurrentUserUseCase: IGetCurrentUserUseCase;
 
     // Controllers
     IResolveSignUpMethodController: IResolveSignUpMethodController;
