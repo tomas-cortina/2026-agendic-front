@@ -2,14 +2,7 @@ import type { Provider } from '@/src/entities/models/provider';
 import type { SignUpMethod } from '@/src/entities/models/sign-up-method';
 import type { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
 
-const PROVIDER_BY_DOMAIN: Record<string, Provider> = {
-    'gmail.com': 'google',
-    'googlemail.com': 'google',
-    'outlook.com': 'microsoft',
-    'hotmail.com': 'microsoft',
-    'live.com': 'microsoft',
-    'msn.com': 'microsoft',
-};
+const PROVIDER_BY_DOMAIN: Record<string, Provider> = {};
 
 export type IResolveSignUpMethodUseCase = ReturnType<typeof resolveSignUpMethodUseCase>;
 export const resolveSignUpMethodUseCase =

@@ -7,7 +7,7 @@ const resolveSignUpMethodController = getInjection('IResolveSignUpMethodControll
 describe('resolveSignUpMethodController', () => {
     it('returns the sign-up method for a valid email', async () => {
         await expect(resolveSignUpMethodController({ email: 'ana@gmail.com' })).resolves.toEqual({
-            method: 'google',
+            method: 'password',
         });
     });
 
