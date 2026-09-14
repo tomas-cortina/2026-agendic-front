@@ -4,15 +4,17 @@ import nextTs from "eslint-config-next/typescript";
 import boundaries from "eslint-plugin-boundaries";
 
 // Import map from docs/agents/clean-architecture.md: each layer lists what it may import.
+// A layer lists itself only where the map allows it (entities) or it's structurally needed
+// (app, di, tests); `checkInternals` below makes same-layer imports subject to this map.
 const ALLOWED_IMPORTS = {
   entities: ["entities"],
-  ports: ["entities", "ports"],
-  "use-cases": ["entities", "ports", "use-cases"],
-  controllers: ["entities", "ports", "use-cases", "controllers"],
-  infrastructure: ["entities", "ports", "infrastructure"],
+  ports: ["entities"],
+  "use-cases": ["entities", "ports"],
+  controllers: ["entities", "ports", "use-cases"],
+  infrastructure: ["entities", "ports"],
   di: ["entities", "ports", "use-cases", "controllers", "infrastructure", "di"],
   app: ["entities", "di", "app"],
-  tests: ["entities", "ports", "use-cases", "controllers", "infrastructure", "di", "tests"],
+  tests: ["entities", "ports", "use-cases", "controllers", "infrastructure", "di", "app", "tests"],
 };
 
 const eslintConfig = defineConfig([
@@ -39,6 +41,7 @@ const eslintConfig = defineConfig([
         2,
         {
           default: "disallow",
+          checkInternals: true,
           policies: Object.entries(ALLOWED_IMPORTS).map(([from, to]) => ({
             from: { element: { type: from } },
             allow: { to: { element: { type: to } } },
