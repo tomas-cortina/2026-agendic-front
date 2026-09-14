@@ -4,12 +4,12 @@
 
 **Blocked by:** the first page that requires a Sesión (none exists yet)
 
-**Status:** needs-triage
+**Status:** done (c58dccb) — `proxy.ts`'s `protectedRoutes` list ships empty, since no page requires a Sesión yet; add routes there when the first one does
 
-- [ ] `proxy.ts` guard redirects visitors without a valid Sesión away from pages that require a Usuario
-- [ ] Signed-in Usuarios reaching `/sign-in` or `/sign-up` are redirected to `/`
-- [ ] New `src/application/use-cases/auth/get-current-user.use-case.ts`: `getCurrentUserUseCase(instrumentationService, usersRepository)(userId)` returns the User
-- [ ] `getCurrentUserController` authenticates with `validateSession` and passes `session.userId` to the use case; `IGetCurrentUserUseCase` registered in `di/types.ts` and `di/modules/auth.module.ts`
-- [ ] The `ponytail:` comment in `get-current-user.controller.ts` and its bullet in ADR 0001 Consequences are removed
-- [ ] `tests/unit/application/use-cases/auth/get-current-user.use-case.test.ts`: happy path plus every not-found branch
-- [ ] `npm test` and `npm run lint` pass
+- [x] `proxy.ts` guard redirects visitors without a valid Sesión away from pages that require a Usuario (scaffolded; `protectedRoutes` is empty until such a page exists)
+- [x] Signed-in Usuarios reaching `/sign-in` or `/sign-up` are redirected to `/`
+- [x] New `src/application/use-cases/auth/get-current-user.use-case.ts`: `getCurrentUserUseCase(instrumentationService, usersRepository)(userId)` returns the User
+- [x] `getCurrentUserController` authenticates with `validateSession` and passes `session.userId` to the use case; `IGetCurrentUserUseCase` registered in `di/types.ts` and `di/modules/auth.module.ts`
+- [x] The `ponytail:` comment in `get-current-user.controller.ts` and its bullet in ADR 0001 Consequences are removed
+- [x] `tests/unit/application/use-cases/auth/get-current-user.use-case.test.ts`: happy path plus every not-found branch
+- [x] `npm test` and `npm run lint` pass
