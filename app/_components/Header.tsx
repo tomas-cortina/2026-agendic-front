@@ -1,7 +1,8 @@
 import Link from 'next/link';
+import type { CurrentUser } from '@/app/(auth)/current-user';
 import { Button } from './ui/button';
 
-export function Header({ user }: { user: { name: string } | null }) {
+export function Header({ user }: { user: CurrentUser | null }) {
     return (
         <header className="flex items-center justify-between px-16 py-5">
             <div className="text-[22px] font-extrabold tracking-[-0.02em] text-foreground">

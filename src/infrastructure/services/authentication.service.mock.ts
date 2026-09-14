@@ -1,7 +1,7 @@
 import type { IUsersRepository } from '@/src/application/repositories/users.repository.interface';
 import type { IAuthenticationService } from '@/src/application/services/authentication.service.interface';
 import { UnauthenticatedError } from '@/src/entities/errors/auth';
-import type { Session } from '@/src/entities/models/session';
+import { isSessionExpired, type Session } from '@/src/entities/models/session';
 import type { User } from '@/src/entities/models/user';
 
 export class MockAuthenticationService implements IAuthenticationService {
@@ -23,9 +23,10 @@ export class MockAuthenticationService implements IAuthenticationService {
         return session;
     }
 
+    // ponytail: mirrors AuthenticationService.validateSession (lint forbids sharing infra code); goes away when sessions move to the DB (ADR 0001)
     async validateSession(sessionId: string): Promise<{ user: User; session: Session }> {
         const session = this.sessions.get(sessionId);
-        if (!session || session.expiresAt < new Date()) {
+        if (!session || isSessionExpired(session)) {
             throw new UnauthenticatedError('Session is invalid or expired');
         }
         const user = await this.usersRepository.getUser(session.userId);

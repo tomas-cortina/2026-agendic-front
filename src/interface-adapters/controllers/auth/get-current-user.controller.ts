@@ -10,7 +10,7 @@ function presenter(user: User, instrumentationService: IInstrumentationService) 
 }
 
 export type IGetCurrentUserController = ReturnType<typeof getCurrentUserController>;
-// No use case: authentication is the whole operation.
+// ponytail: no use case, breaking the controller→use-case rule; add getCurrentUserUseCase with route protection (ticket 04, ADR 0001)
 export const getCurrentUserController =
     (instrumentationService: IInstrumentationService, authenticationService: IAuthenticationService) =>
     async (sessionId: string | undefined): Promise<ReturnType<typeof presenter>> =>
