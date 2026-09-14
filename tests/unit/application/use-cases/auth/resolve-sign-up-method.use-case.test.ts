@@ -14,4 +14,8 @@ describe('resolveSignUpMethodUseCase', () => {
     ])('resolves %s to password', (domain) => {
         expect(resolveSignUpMethodUseCase({ email: `ana@${domain}` })).toBe('password');
     });
+
+    it('resolves to password regardless of email casing, since PROVIDER_BY_DOMAIN is intentionally empty', () => {
+        expect(resolveSignUpMethodUseCase({ email: 'Ana@GMAIL.com' })).toBe('password');
+    });
 });
