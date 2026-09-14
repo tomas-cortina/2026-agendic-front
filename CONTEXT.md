@@ -25,6 +25,10 @@ _Avoid_: staff (en singular), recurso, empleado
 **Staff**:
 El conjunto de profesionales de un Negocio. Solo se usa en plural/colectivo.
 
+**Especialidad**:
+Área en la que se desempeña un Profesional (kinesiología, colorimetría…). Es descriptiva: no limita qué Servicios puede atender.
+_Avoid_: rubro (eso es del Negocio), categoría
+
 **Usuario**:
 Persona con credenciales (email y contraseña) para entrar al panel de un Negocio. No confundir con el Cliente.
 _Avoid_: cuenta, admin, dueño
@@ -72,6 +76,14 @@ _Avoid_: agendar, sacar turno, pedir turno
 **Reagendar**:
 Mover un turno existente a otro horario. Libera el horario anterior.
 _Avoid_: reprogramar, cambiar el turno
+
+**Cancelar**:
+Anular un Turno. Su horario queda libre.
+_Avoid_: eliminar, borrar (un turno)
+
+**Dar de baja**:
+Retirar un Servicio de la agenda de un Negocio, o desvincular a un Profesional de un Negocio (su cuenta sigue existiendo). Sus Turnos futuros en ese Negocio quedan cancelados.
+_Avoid_: eliminar, borrar, desactivar
 
 **Ausencia**:
 Turno al que el Cliente no se presentó sin cancelarlo.
