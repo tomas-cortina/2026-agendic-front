@@ -6,6 +6,7 @@ import { signUpUseCase } from '@/src/application/use-cases/auth/sign-up.use-case
 import { MockUsersRepository } from '@/src/infrastructure/repositories/users.repository.mock';
 import { AuthenticationService } from '@/src/infrastructure/services/authentication.service';
 import { MockAuthenticationService } from '@/src/infrastructure/services/authentication.service.mock';
+import { getCurrentUserController } from '@/src/interface-adapters/controllers/auth/get-current-user.controller';
 import { resolveSignUpMethodController } from '@/src/interface-adapters/controllers/auth/resolve-sign-up-method.controller';
 import { signInController } from '@/src/interface-adapters/controllers/auth/sign-in.controller';
 import { signUpController } from '@/src/interface-adapters/controllers/auth/sign-up.controller';
@@ -14,9 +15,11 @@ export function createAuthModule() {
     const authModule = createModule();
 
     if (process.env.NODE_ENV === 'test') {
-        authModule.bind(DI_SYMBOLS.IAuthenticationService).toClass(MockAuthenticationService);
+        authModule
+            .bind(DI_SYMBOLS.IAuthenticationService)
+            .toClass(MockAuthenticationService, [DI_SYMBOLS.IUsersRepository]);
     } else {
-        authModule.bind(DI_SYMBOLS.IAuthenticationService).toClass(AuthenticationService);
+        authModule.bind(DI_SYMBOLS.IAuthenticationService).toClass(AuthenticationService, [DI_SYMBOLS.IUsersRepository]);
     }
 
     // ponytail: no real users repository until there is a database, so the mock serves every env (ADR 0001)
@@ -56,6 +59,13 @@ export function createAuthModule() {
     authModule
         .bind(DI_SYMBOLS.ISignInController)
         .toHigherOrderFunction(signInController, [DI_SYMBOLS.IInstrumentationService, DI_SYMBOLS.ISignInUseCase]);
+
+    authModule
+        .bind(DI_SYMBOLS.IGetCurrentUserController)
+        .toHigherOrderFunction(getCurrentUserController, [
+            DI_SYMBOLS.IInstrumentationService,
+            DI_SYMBOLS.IAuthenticationService,
+        ]);
 
     return authModule;
 }

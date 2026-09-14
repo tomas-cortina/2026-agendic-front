@@ -4,6 +4,10 @@ import type { CreateUser, User } from '@/src/entities/models/user';
 export class MockUsersRepository implements IUsersRepository {
     private readonly users = new Map<string, User>();
 
+    async getUser(id: string): Promise<User | undefined> {
+        return [...this.users.values()].find((user) => user.id === id);
+    }
+
     async getUserByEmail(email: string): Promise<User | undefined> {
         return this.users.get(email);
     }

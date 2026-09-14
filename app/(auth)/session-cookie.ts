@@ -9,3 +9,7 @@ export async function setSessionCookie({ sessionId, expiresAt }: { sessionId: st
         expires: expiresAt,
     });
 }
+
+export async function getSessionId(): Promise<string | undefined> {
+    return (await cookies()).get('session')?.value;
+}
