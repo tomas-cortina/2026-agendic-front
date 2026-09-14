@@ -1,4 +1,4 @@
-export function LoginBrandPanel() {
+export function SignupBrandPanel() {
     return (
         <div className="hidden md:flex flex-col justify-between bg-[#0f1b2d] text-white p-11">
             <div>
@@ -9,8 +9,8 @@ export function LoginBrandPanel() {
                     Tu agenda, siempre a mano.
                 </div>
                 <div className="text-[13px] text-[#aab4c8] leading-[1.45] mb-5">
-                    Entrá para ver los turnos de hoy, confirmar asistencias y
-                    organizar tu equipo.
+                    Creá tu cuenta para ver los turnos de hoy, confirmar
+                    asistencias y organizar tu equipo.
                 </div>
                 <div className="bg-[#182338] border border-[#2a3650] rounded-[10px] p-3 text-[11.5px]">
                     <div className="flex justify-between mb-2 text-[#aab4c8]">

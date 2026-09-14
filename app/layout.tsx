@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
+import { Header } from '@/app/_components/Header';
+import { Footer } from '@/app/_components/Footer';
 import './globals.css';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -18,7 +20,11 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
             lang="es"
             className={`${plusJakartaSans.className} h-full antialiased`}
         >
-            <body className="min-h-full flex flex-col">{children}</body>
+            <body className="min-h-full flex flex-col bg-white text-foreground">
+                <Header />
+                <div className="flex-1 flex flex-col">{children}</div>
+                <Footer />
+            </body>
         </html>
     );
 }

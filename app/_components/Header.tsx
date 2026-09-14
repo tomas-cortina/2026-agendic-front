@@ -33,13 +33,17 @@ export function Header() {
                     variant="ghost"
                     className="text-[15px] font-semibold text-foreground px-4 py-2.5 hover:text-primary transition-colors h-auto"
                 >
-                    <Link href="/login">Ir a mi cuenta</Link>
+                    <Link href="/sign-in" transitionTypes={['auth-nav']}>
+                        Ir a mi cuenta
+                    </Link>
                 </Button>
                 <Button
                     asChild
                     className="text-[15px] font-bold text-white bg-primary px-[18px] py-[11px] rounded-[10px] hover:bg-primary/90 transition-colors h-auto"
                 >
-                    <Link href="#">Empezá gratis</Link>
+                    <Link href="/sign-up" transitionTypes={['auth-nav']}>
+                        Empezá gratis
+                    </Link>
                 </Button>
             </div>
         </header>

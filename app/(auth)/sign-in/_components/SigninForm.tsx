@@ -9,14 +9,11 @@ import { signIn, type SignInState } from '../actions';
 
 const initialState: SignInState = {};
 
-export function LoginForm() {
-    const [state, formAction, pending] = useActionState(
-        signIn,
-        initialState,
-    );
+export function SigninForm() {
+    const [state, formAction, pending] = useActionState(signIn, initialState);
 
     return (
-        <div className="p-12 pb-10 flex flex-col justify-center">
+        <div className="p-12 pb-10 flex flex-col justify-center w-full">
             <Link
                 href="/"
                 className="text-[12px] text-muted-foreground mb-5 hover:text-primary transition-colors"
@@ -31,7 +28,10 @@ export function LoginForm() {
             </div>
 
             <form action={formAction} className="flex flex-col">
-                <Label htmlFor="email" className="text-[12.5px] font-semibold text-muted-foreground mb-1.5">
+                <Label
+                    htmlFor="email"
+                    className="text-[12.5px] font-semibold text-muted-foreground mb-1.5"
+                >
                     Email
                 </Label>
                 <Input
@@ -45,7 +45,10 @@ export function LoginForm() {
                 />
 
                 <div className="flex justify-between items-baseline gap-2 flex-wrap mb-1.5">
-                    <Label htmlFor="password" className="text-[12.5px] font-semibold text-muted-foreground">
+                    <Label
+                        htmlFor="password"
+                        className="text-[12.5px] font-semibold text-muted-foreground"
+                    >
                         Contraseña
                     </Label>
                     <Link
@@ -107,7 +110,11 @@ export function LoginForm() {
 
             <div className="text-center text-[13px] text-muted-foreground mt-6">
                 ¿No tenés cuenta?{' '}
-                <Link href="#" className="text-foreground font-semibold hover:text-primary transition-colors">
+                <Link
+                    href="/sign-up"
+                    transitionTypes={['auth-nav']}
+                    className="text-foreground font-semibold hover:text-primary transition-colors"
+                >
                     Empezá gratis
                 </Link>
             </div>
