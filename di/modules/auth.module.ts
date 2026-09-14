@@ -2,6 +2,7 @@ import { createModule } from '@evyweb/ioctopus';
 import { DI_SYMBOLS } from '@/di/types';
 import { resolveSignUpMethodUseCase } from '@/src/application/use-cases/auth/resolve-sign-up-method.use-case';
 import { signInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
+import { signOutUseCase } from '@/src/application/use-cases/auth/sign-out.use-case';
 import { signUpUseCase } from '@/src/application/use-cases/auth/sign-up.use-case';
 import { MockUsersRepository } from '@/src/infrastructure/repositories/users.repository.mock';
 import { AuthenticationService } from '@/src/infrastructure/services/authentication.service';
@@ -9,6 +10,7 @@ import { MockAuthenticationService } from '@/src/infrastructure/services/authent
 import { getCurrentUserController } from '@/src/interface-adapters/controllers/auth/get-current-user.controller';
 import { resolveSignUpMethodController } from '@/src/interface-adapters/controllers/auth/resolve-sign-up-method.controller';
 import { signInController } from '@/src/interface-adapters/controllers/auth/sign-in.controller';
+import { signOutController } from '@/src/interface-adapters/controllers/auth/sign-out.controller';
 import { signUpController } from '@/src/interface-adapters/controllers/auth/sign-up.controller';
 
 export function createAuthModule() {
@@ -46,6 +48,10 @@ export function createAuthModule() {
         ]);
 
     authModule
+        .bind(DI_SYMBOLS.ISignOutUseCase)
+        .toHigherOrderFunction(signOutUseCase, [DI_SYMBOLS.IInstrumentationService, DI_SYMBOLS.IAuthenticationService]);
+
+    authModule
         .bind(DI_SYMBOLS.IResolveSignUpMethodController)
         .toHigherOrderFunction(resolveSignUpMethodController, [
             DI_SYMBOLS.IInstrumentationService,
@@ -65,6 +71,14 @@ export function createAuthModule() {
         .toHigherOrderFunction(getCurrentUserController, [
             DI_SYMBOLS.IInstrumentationService,
             DI_SYMBOLS.IAuthenticationService,
+        ]);
+
+    authModule
+        .bind(DI_SYMBOLS.ISignOutController)
+        .toHigherOrderFunction(signOutController, [
+            DI_SYMBOLS.IInstrumentationService,
+            DI_SYMBOLS.IAuthenticationService,
+            DI_SYMBOLS.ISignOutUseCase,
         ]);
 
     return authModule;

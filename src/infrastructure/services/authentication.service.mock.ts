@@ -35,4 +35,8 @@ export class MockAuthenticationService implements IAuthenticationService {
         }
         return { user, session };
     }
+
+    async invalidateSession(sessionId: string): Promise<void> {
+        this.sessions.delete(sessionId);
+    }
 }

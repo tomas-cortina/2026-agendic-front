@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { signOut } from '@/app/(auth)/actions';
 import type { CurrentUser } from '@/app/(auth)/current-user';
 import { Button } from './ui/button';
 
@@ -21,7 +22,18 @@ export function Header({ user }: { user: CurrentUser | null }) {
             </nav>
             <div className="flex items-center gap-2.5">
                 {user ? (
-                    <span className="text-[15px] font-semibold text-foreground px-4 py-2.5">{user.name}</span>
+                    <>
+                        <span className="text-[15px] font-semibold text-foreground px-4 py-2.5">{user.name}</span>
+                        <form action={signOut}>
+                            <Button
+                                type="submit"
+                                variant="ghost"
+                                className="text-[15px] font-semibold text-foreground px-4 py-2.5 hover:text-primary transition-colors h-auto"
+                            >
+                                Cerrar sesión
+                            </Button>
+                        </form>
+                    </>
                 ) : (
                     <>
                         <Button

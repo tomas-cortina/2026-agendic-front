@@ -6,4 +6,5 @@ export interface IAuthenticationService {
     verifyPassword(password: string, passwordHash: string): Promise<boolean>;
     createSession(user: User): Promise<Session>;
     validateSession(sessionId: string): Promise<{ user: User; session: Session }>;
+    invalidateSession(sessionId: string): Promise<void>;
 }

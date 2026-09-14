@@ -13,3 +13,7 @@ export async function setSessionCookie({ sessionId, expiresAt }: { sessionId: st
 export async function getSessionId(): Promise<string | undefined> {
     return (await cookies()).get('session')?.value;
 }
+
+export async function deleteSessionCookie() {
+    (await cookies()).delete('session');
+}

@@ -43,4 +43,8 @@ export class AuthenticationService implements IAuthenticationService {
         }
         return { user, session };
     }
+
+    async invalidateSession(sessionId: string): Promise<void> {
+        this.sessions.delete(sessionId);
+    }
 }
