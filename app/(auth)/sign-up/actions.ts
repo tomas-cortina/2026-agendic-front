@@ -4,10 +4,9 @@ import { getInjection } from '@/di/container';
 import { InputParseError } from '@/src/entities/errors/common';
 import type { SignUpMethod } from '@/src/entities/models/sign-up-method';
 
-export type ResolveSignUpMethodResult = {
-    method?: SignUpMethod;
-    error?: string;
-};
+export type ResolveSignUpMethodResult =
+    | { method: SignUpMethod }
+    | { error: string };
 
 export async function resolveSignUpMethod(
     email: string,

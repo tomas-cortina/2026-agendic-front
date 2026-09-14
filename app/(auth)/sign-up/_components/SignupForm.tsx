@@ -7,7 +7,7 @@ import { DetailsStep } from './DetailsStep';
 import { EmailStep } from './EmailStep';
 import { ProviderRedirectStep } from './ProviderRedirectStep';
 
-// The step components below are client components because this file imports them;
+// EmailStep and ProviderRedirectStep are client components because this file imports them;
 // they take function props, so they must not become 'use client' entry points themselves.
 export function SignupForm() {
     const [step, setStep] = useState<'email' | SignUpMethod>('email');
@@ -19,14 +19,14 @@ export function SignupForm() {
         setError(undefined);
         startTransition(async () => {
             const result = await resolveSignUpMethod(email);
-            if (result.method) setStep(result.method);
+            if ('method' in result) setStep(result.method);
             else setError(result.error);
         });
     }
 
     if (step === 'password') return <DetailsStep email={email} />;
 
-    if (step === 'google' || step === 'microsoft') {
+    if (step !== 'email') {
         return (
             <ProviderRedirectStep
                 provider={step}

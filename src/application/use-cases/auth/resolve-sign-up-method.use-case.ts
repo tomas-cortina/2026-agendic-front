@@ -1,7 +1,7 @@
-import type { SignUpMethod } from '@/src/entities/models/sign-up-method';
+import type { Provider, SignUpMethod } from '@/src/entities/models/sign-up-method';
 import type { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
 
-const PROVIDER_BY_DOMAIN: Record<string, SignUpMethod> = {
+const PROVIDER_BY_DOMAIN: Record<string, Provider> = {
     'gmail.com': 'google',
     'googlemail.com': 'google',
     'outlook.com': 'microsoft',

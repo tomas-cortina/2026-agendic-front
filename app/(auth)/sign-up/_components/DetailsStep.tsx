@@ -1,10 +1,12 @@
+'use client';
+
 import { useActionState, useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/app/_components/ui/button';
 import { Input } from '@/app/_components/ui/input';
 import { Label } from '@/app/_components/ui/label';
 import { signUp, type SignUpState } from '../actions';
-import { StepShell } from './StepShell';
+import { FormError, StepShell } from './StepShell';
 
 const initialState: SignUpState = {};
 
@@ -22,11 +24,7 @@ export function DetailsStep({ email }: { email: string }) {
     const meetsMin = password.length >= MIN_PASSWORD_LENGTH;
 
     return (
-        <StepShell centerFooter>
-            <div className="text-[28px] font-extrabold mb-1.5 text-foreground">
-                Creá tu cuenta en Agendic gratis
-            </div>
-
+        <StepShell title="Creá tu cuenta en Agendic gratis" centerFooter>
             <form action={formAction} className="flex flex-col mt-4.5">
                 <Label htmlFor="email" className={labelClass}>
                     Ingresá tu email para empezar.
@@ -93,14 +91,7 @@ export function DetailsStep({ email }: { email: string }) {
                     <div>• No necesitás símbolos, números ni mayúsculas</div>
                 </div>
 
-                {state.error && (
-                    <p
-                        aria-live="polite"
-                        className="text-[13px] text-destructive -mt-2.5 mb-4.5"
-                    >
-                        {state.error}
-                    </p>
-                )}
+                <FormError message={state.error} />
 
                 <div className="flex justify-end">
                     <Button

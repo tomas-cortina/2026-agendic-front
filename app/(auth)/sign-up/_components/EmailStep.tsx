@@ -1,9 +1,11 @@
 import { Button } from '@/app/_components/ui/button';
 import { Input } from '@/app/_components/ui/input';
-import { StepShell } from './StepShell';
+import type { Provider } from '@/src/entities/models/sign-up-method';
+import { PROVIDER_LABEL, ProviderButton } from './ProviderButton';
+import { FormError, StepShell } from './StepShell';
 
-const providerButtonClass =
-    'text-[14px] font-semibold text-foreground bg-white border-[1.5px] border-[#d6dbe6] px-4.5 py-[11px] rounded-[10px] hover:bg-gray-50 transition-colors h-auto';
+// Derived from the typed label map (not providerSchema) to keep zod out of the client bundle.
+const PROVIDERS = Object.keys(PROVIDER_LABEL) as Provider[];
 
 export function EmailStep({
     email,
@@ -19,14 +21,10 @@ export function EmailStep({
     error?: string;
 }) {
     return (
-        <StepShell>
-            <div className="text-[28px] font-extrabold mb-1.5 text-foreground">
-                Creá tu cuenta gratis
-            </div>
-            <div className="text-[14px] text-muted-foreground mb-6">
-                No necesitás tarjeta. Ampliás cuando quieras.
-            </div>
-
+        <StepShell
+            title="Creá tu cuenta gratis"
+            subtitle="No necesitás tarjeta. Ampliás cuando quieras."
+        >
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
@@ -55,14 +53,7 @@ export function EmailStep({
                     {pending ? 'Verificando…' : 'Continuar con email'}
                 </Button>
 
-                {error && (
-                    <p
-                        aria-live="polite"
-                        className="text-[13px] text-destructive -mt-2.5 mb-4.5"
-                    >
-                        {error}
-                    </p>
-                )}
+                <FormError message={error} />
 
                 <div className="flex items-center gap-2.5 text-muted-foreground text-[12px] mb-4.5">
                     <div className="flex-1 h-px bg-border" />
@@ -70,12 +61,9 @@ export function EmailStep({
                     <div className="flex-1 h-px bg-border" />
                 </div>
                 <div className="flex flex-col gap-2.5 mb-4.5">
-                    <Button type="button" variant="outline" className={providerButtonClass}>
-                        Continuar con Google
-                    </Button>
-                    <Button type="button" variant="outline" className={providerButtonClass}>
-                        Continuar con Microsoft
-                    </Button>
+                    {PROVIDERS.map((provider) => (
+                        <ProviderButton key={provider} provider={provider} />
+                    ))}
                 </div>
 
                 <div className="text-[12.5px] text-muted-foreground leading-[1.45]">
