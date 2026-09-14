@@ -1,5 +1,6 @@
-import type { Provider } from '@/src/entities/models/sign-up-method';
-import { PROVIDER_LABEL, ProviderButton } from './ProviderButton';
+import type { Provider } from '@/src/entities/models/provider';
+import { PROVIDER_LABEL } from './providers';
+import { ProviderButton } from './ProviderButton';
 import { StepShell } from './StepShell';
 
 export function ProviderRedirectStep({

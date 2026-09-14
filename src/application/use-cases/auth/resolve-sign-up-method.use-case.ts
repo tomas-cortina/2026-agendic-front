@@ -1,4 +1,5 @@
-import type { Provider, SignUpMethod } from '@/src/entities/models/sign-up-method';
+import type { Provider } from '@/src/entities/models/provider';
+import type { SignUpMethod } from '@/src/entities/models/sign-up-method';
 import type { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
 
 const PROVIDER_BY_DOMAIN: Record<string, Provider> = {

@@ -6,7 +6,8 @@ import { Button } from '@/app/_components/ui/button';
 import { Input } from '@/app/_components/ui/input';
 import { Label } from '@/app/_components/ui/label';
 import { signUp, type SignUpState } from '../actions';
-import { FormError, StepShell } from './StepShell';
+import { FormError } from './FormError';
+import { StepShell } from './StepShell';
 
 const initialState: SignUpState = {};
 

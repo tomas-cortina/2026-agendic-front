@@ -1,11 +1,11 @@
 import { Button } from '@/app/_components/ui/button';
 import { Input } from '@/app/_components/ui/input';
-import type { Provider } from '@/src/entities/models/sign-up-method';
-import { PROVIDER_LABEL, ProviderButton } from './ProviderButton';
-import { FormError, StepShell } from './StepShell';
+import { FormError } from './FormError';
+import { PROVIDER_LABEL, PROVIDERS } from './providers';
+import { ProviderButton } from './ProviderButton';
+import { StepShell } from './StepShell';
 
-// Derived from the typed label map (not providerSchema) to keep zod out of the client bundle.
-const PROVIDERS = Object.keys(PROVIDER_LABEL) as Provider[];
+const PROVIDER_NAMES = PROVIDERS.map((p) => PROVIDER_LABEL[p]).join(' o ');
 
 export function EmailStep({
     email,
@@ -67,7 +67,7 @@ export function EmailStep({
                 </div>
 
                 <div className="text-[12.5px] text-muted-foreground leading-[1.45]">
-                    Al continuar con Google o Microsoft, sincronizás tu agenda
+                    Al continuar con {PROVIDER_NAMES}, sincronizás tu agenda
                     automáticamente.
                 </div>
             </form>

@@ -1,11 +1,7 @@
 import { Button } from '@/app/_components/ui/button';
 import { cn } from '@/app/_components/utils';
-import type { Provider } from '@/src/entities/models/sign-up-method';
-
-export const PROVIDER_LABEL: Record<Provider, string> = {
-    google: 'Google',
-    microsoft: 'Microsoft',
-};
+import type { Provider } from '@/src/entities/models/provider';
+import { PROVIDER_LABEL } from './providers';
 
 export function ProviderButton({
     provider,
