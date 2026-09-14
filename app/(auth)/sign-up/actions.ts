@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation';
 import { getInjection } from '@/di/container';
 import { EmailTakenError } from '@/src/entities/errors/auth';
-import { InputParseError } from '@/src/entities/errors/common';
+import { BackendValidationError, InputParseError } from '@/src/entities/errors/common';
 import type { SignUpMethod } from '@/src/entities/models/sign-up-method';
 import { setSessionCookie } from '../session-cookie';
 
@@ -44,7 +44,11 @@ export async function signUp(
         });
         await setSessionCookie(session);
     } catch (error) {
-        if (error instanceof InputParseError) {
+        if (error instanceof BackendValidationError) {
+            // The back rejected what the front's rules let through: they've drifted, so report it too.
+            getInjection('ICrashReporterService').report(error);
+        }
+        if (error instanceof InputParseError || error instanceof BackendValidationError) {
             return { error: 'Revisá los datos: un email válido, tu nombre y una contraseña de 12 a 72 caracteres.' };
         }
         if (error instanceof EmailTakenError) {

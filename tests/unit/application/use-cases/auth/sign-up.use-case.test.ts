@@ -2,20 +2,21 @@ import { getInjection } from '@/di/container';
 import { EmailTakenError } from '@/src/entities/errors/auth';
 
 const signUpUseCase = getInjection('ISignUpUseCase');
-const usersRepository = getInjection('IUsersRepository');
+const authenticationService = getInjection('IAuthenticationService');
 
 describe('signUpUseCase', () => {
-    it('stores the user with a hashed password and returns a session for them', async () => {
+    it('creates the Usuario and returns a Sesión that identifies them', async () => {
         const session = await signUpUseCase({
             email: 'ana@negocio.com',
             name: 'Ana Pérez',
             password: 'correct horse battery',
         });
 
-        const user = await usersRepository.getUserByEmail('ana@negocio.com');
-        expect(user).toMatchObject({ email: 'ana@negocio.com', name: 'Ana Pérez' });
-        expect(user?.passwordHash).not.toBe('correct horse battery');
-        expect(session.userId).toBe(user?.id);
+        await expect(authenticationService.getCurrentUser(session.id)).resolves.toMatchObject({
+            email: 'ana@negocio.com',
+            name: 'Ana Pérez',
+            role: 'USER',
+        });
     });
 
     it('throws EmailTakenError when the email is already registered', async () => {

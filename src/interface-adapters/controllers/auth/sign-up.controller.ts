@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { InputParseError } from '@/src/entities/errors/common';
 import type { Session } from '@/src/entities/models/session';
-import { passwordSchema, userSchema } from '@/src/entities/models/user';
+import { createUserSchema } from '@/src/entities/models/user';
 import type { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
 import type { ISignUpUseCase } from '@/src/application/use-cases/auth/sign-up.use-case';
 
@@ -12,7 +12,7 @@ function presenter(session: Session, instrumentationService: IInstrumentationSer
     }));
 }
 
-const inputSchema = userSchema.pick({ email: true, name: true }).extend({ password: passwordSchema });
+const inputSchema = createUserSchema;
 
 export type ISignUpController = ReturnType<typeof signUpController>;
 // No authentication step: sign-up happens before any session exists.

@@ -1,11 +1,9 @@
 import { createModule } from '@evyweb/ioctopus';
 import { DI_SYMBOLS } from '@/di/types';
-import { getCurrentUserUseCase } from '@/src/application/use-cases/auth/get-current-user.use-case';
 import { resolveSignUpMethodUseCase } from '@/src/application/use-cases/auth/resolve-sign-up-method.use-case';
 import { signInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
 import { signOutUseCase } from '@/src/application/use-cases/auth/sign-out.use-case';
 import { signUpUseCase } from '@/src/application/use-cases/auth/sign-up.use-case';
-import { MockUsersRepository } from '@/src/infrastructure/repositories/users.repository.mock';
 import { AuthenticationService } from '@/src/infrastructure/services/authentication.service';
 import { MockAuthenticationService } from '@/src/infrastructure/services/authentication.service.mock';
 import { getCurrentUserController } from '@/src/interface-adapters/controllers/auth/get-current-user.controller';
@@ -18,15 +16,15 @@ export function createAuthModule() {
     const authModule = createModule();
 
     if (process.env.NODE_ENV === 'test') {
-        authModule
-            .bind(DI_SYMBOLS.IAuthenticationService)
-            .toClass(MockAuthenticationService, [DI_SYMBOLS.IUsersRepository]);
+        authModule.bind(DI_SYMBOLS.IAuthenticationService).toClass(MockAuthenticationService);
     } else {
-        authModule.bind(DI_SYMBOLS.IAuthenticationService).toClass(AuthenticationService, [DI_SYMBOLS.IUsersRepository]);
+        // Read on first use, not at import, so `next build` doesn't need the back's URL.
+        authModule.bind(DI_SYMBOLS.IAuthenticationService).toFactory(() => {
+            const apiBaseUrl = process.env.API_BASE_URL;
+            if (!apiBaseUrl) throw new Error('API_BASE_URL is not set');
+            return new AuthenticationService(apiBaseUrl);
+        });
     }
-
-    // ponytail: no real users repository until there is a database, so the mock serves every env (ADR 0001)
-    authModule.bind(DI_SYMBOLS.IUsersRepository).toClass(MockUsersRepository);
 
     authModule
         .bind(DI_SYMBOLS.IResolveSignUpMethodUseCase)
@@ -34,27 +32,15 @@ export function createAuthModule() {
 
     authModule
         .bind(DI_SYMBOLS.ISignUpUseCase)
-        .toHigherOrderFunction(signUpUseCase, [
-            DI_SYMBOLS.IInstrumentationService,
-            DI_SYMBOLS.IAuthenticationService,
-            DI_SYMBOLS.IUsersRepository,
-        ]);
+        .toHigherOrderFunction(signUpUseCase, [DI_SYMBOLS.IInstrumentationService, DI_SYMBOLS.IAuthenticationService]);
 
     authModule
         .bind(DI_SYMBOLS.ISignInUseCase)
-        .toHigherOrderFunction(signInUseCase, [
-            DI_SYMBOLS.IInstrumentationService,
-            DI_SYMBOLS.IAuthenticationService,
-            DI_SYMBOLS.IUsersRepository,
-        ]);
+        .toHigherOrderFunction(signInUseCase, [DI_SYMBOLS.IInstrumentationService, DI_SYMBOLS.IAuthenticationService]);
 
     authModule
         .bind(DI_SYMBOLS.ISignOutUseCase)
         .toHigherOrderFunction(signOutUseCase, [DI_SYMBOLS.IInstrumentationService, DI_SYMBOLS.IAuthenticationService]);
-
-    authModule
-        .bind(DI_SYMBOLS.IGetCurrentUserUseCase)
-        .toHigherOrderFunction(getCurrentUserUseCase, [DI_SYMBOLS.IInstrumentationService, DI_SYMBOLS.IUsersRepository]);
 
     authModule
         .bind(DI_SYMBOLS.IResolveSignUpMethodController)
@@ -76,16 +62,11 @@ export function createAuthModule() {
         .toHigherOrderFunction(getCurrentUserController, [
             DI_SYMBOLS.IInstrumentationService,
             DI_SYMBOLS.IAuthenticationService,
-            DI_SYMBOLS.IGetCurrentUserUseCase,
         ]);
 
     authModule
         .bind(DI_SYMBOLS.ISignOutController)
-        .toHigherOrderFunction(signOutController, [
-            DI_SYMBOLS.IInstrumentationService,
-            DI_SYMBOLS.IAuthenticationService,
-            DI_SYMBOLS.ISignOutUseCase,
-        ]);
+        .toHigherOrderFunction(signOutController, [DI_SYMBOLS.IInstrumentationService, DI_SYMBOLS.ISignOutUseCase]);
 
     return authModule;
 }

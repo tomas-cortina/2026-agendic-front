@@ -1,10 +1,10 @@
 import type { Session } from '@/src/entities/models/session';
-import type { User } from '@/src/entities/models/user';
+import type { CreateUser, User } from '@/src/entities/models/user';
 
+// Sign-up lives here, not in a users repository: the back's POST /users answers with a Sesión.
 export interface IAuthenticationService {
-    hashPassword(password: string): Promise<string>;
-    verifyPassword(password: string, passwordHash: string): Promise<boolean>;
-    createSession(user: User): Promise<Session>;
-    validateSession(sessionId: string): Promise<{ user: User; session: Session }>;
+    signUp(input: CreateUser): Promise<Session>;
+    signIn(credentials: { email: string; password: string }): Promise<Session>;
+    getCurrentUser(sessionId: string): Promise<User>;
     invalidateSession(sessionId: string): Promise<void>;
 }

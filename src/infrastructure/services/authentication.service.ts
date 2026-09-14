@@ -1,50 +1,68 @@
-import { compare, hash } from 'bcrypt-ts';
-import type { IUsersRepository } from '@/src/application/repositories/users.repository.interface';
+import { z } from 'zod';
 import type { IAuthenticationService } from '@/src/application/services/authentication.service.interface';
-import { UnauthenticatedError } from '@/src/entities/errors/auth';
-import { isSessionExpired, type Session } from '@/src/entities/models/session';
-import type { User } from '@/src/entities/models/user';
+import { AuthenticationError, EmailTakenError, UnauthenticatedError } from '@/src/entities/errors/auth';
+import { BackendValidationError } from '@/src/entities/errors/common';
+import type { Session } from '@/src/entities/models/session';
+import { userSchema, type CreateUser, type User } from '@/src/entities/models/user';
 
-const SALT_ROUNDS = 10;
-const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const sessionResponseSchema = z
+    .object({ sessionId: z.string(), expiresAt: z.coerce.date() })
+    .transform(({ sessionId, expiresAt }): Session => ({ id: sessionId, expiresAt }));
 
-// ponytail: in-memory sessions, lost on restart; move to a sessions table with the DB (ADR 0001)
+type ErrorsByStatus = Record<number, (options: ErrorOptions) => Error>;
+
+const invalidSessionErrors: ErrorsByStatus = {
+    401: (options) => new UnauthenticatedError('Missing, expired or signed-out session', options),
+};
+
 export class AuthenticationService implements IAuthenticationService {
-    private readonly sessions = new Map<string, Session>();
+    constructor(private readonly apiBaseUrl: string) {}
 
-    constructor(private readonly usersRepository: IUsersRepository) {}
-
-    hashPassword(password: string): Promise<string> {
-        return hash(password, SALT_ROUNDS);
+    async signUp(input: CreateUser): Promise<Session> {
+        const response = await this.request('POST', '/users', {
+            body: input,
+            errors: { 409: (options) => new EmailTakenError('Email is already registered', options) },
+        });
+        return sessionResponseSchema.parse(await response.json());
     }
 
-    verifyPassword(password: string, passwordHash: string): Promise<boolean> {
-        return compare(password, passwordHash);
+    async signIn(credentials: { email: string; password: string }): Promise<Session> {
+        const response = await this.request('POST', '/sessions', {
+            body: credentials,
+            errors: { 401: (options) => new AuthenticationError('Invalid email or password', options) },
+        });
+        return sessionResponseSchema.parse(await response.json());
     }
 
-    async createSession(user: User): Promise<Session> {
-        const session = {
-            id: crypto.randomUUID(),
-            userId: user.id,
-            expiresAt: new Date(Date.now() + SESSION_TTL_MS),
-        };
-        this.sessions.set(session.id, session);
-        return session;
-    }
-
-    async validateSession(sessionId: string): Promise<{ user: User; session: Session }> {
-        const session = this.sessions.get(sessionId);
-        if (!session || isSessionExpired(session)) {
-            throw new UnauthenticatedError('Session is invalid or expired');
-        }
-        const user = await this.usersRepository.getUser(session.userId);
-        if (!user) {
-            throw new UnauthenticatedError('Session user no longer exists');
-        }
-        return { user, session };
+    async getCurrentUser(sessionId: string): Promise<User> {
+        const response = await this.request('GET', '/users/me', { sessionId, errors: invalidSessionErrors });
+        return userSchema.parse(await response.json());
     }
 
     async invalidateSession(sessionId: string): Promise<void> {
-        this.sessions.delete(sessionId);
+        await this.request('DELETE', '/sessions/current', { sessionId, errors: invalidSessionErrors });
+    }
+
+    private async request(
+        method: 'GET' | 'POST' | 'DELETE',
+        path: string,
+        { body, sessionId, errors = {} }: { body?: unknown; sessionId?: string; errors?: ErrorsByStatus },
+    ): Promise<Response> {
+        const response = await fetch(`${this.apiBaseUrl}${path}`, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                ...(sessionId ? { Authorization: `Bearer ${sessionId}` } : {}),
+            },
+            body: body === undefined ? undefined : JSON.stringify(body),
+            cache: 'no-store',
+        });
+        if (response.ok) return response;
+
+        const options = { cause: await response.json().catch(() => undefined) };
+        const toError = errors[response.status];
+        if (toError) throw toError(options);
+        if (response.status === 400) throw new BackendValidationError('Back rejected the input', options);
+        throw new Error(`Back answered ${response.status} to ${method} ${path}`, options);
     }
 }
