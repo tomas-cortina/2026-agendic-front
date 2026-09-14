@@ -8,22 +8,13 @@ export function Header() {
                 agendic<span className="text-primary">.</span>
             </div>
             <nav className="flex gap-8 text-[15px] font-medium text-foreground">
-                <Link
-                    href="#"
-                    className="hover:text-primary transition-colors"
-                >
+                <Link href="#" className="hover:text-primary transition-colors">
                     Funcionalidades
                 </Link>
-                <Link
-                    href="#"
-                    className="hover:text-primary transition-colors"
-                >
+                <Link href="#" className="hover:text-primary transition-colors">
                     Rubros
                 </Link>
-                <Link
-                    href="#"
-                    className="hover:text-primary transition-colors"
-                >
+                <Link href="#" className="hover:text-primary transition-colors">
                     Preguntas frecuentes
                 </Link>
             </nav>
