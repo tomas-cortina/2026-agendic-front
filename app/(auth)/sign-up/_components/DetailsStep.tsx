@@ -65,6 +65,7 @@ export function DetailsStep({ email }: { email: string }) {
                         autoComplete="new-password"
                         required
                         minLength={MIN_PASSWORD_LENGTH}
+                        maxLength={72}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="contraseña"

@@ -25,9 +25,35 @@ _Avoid_: staff (en singular), recurso, empleado
 **Staff**:
 El conjunto de profesionales de un Negocio. Solo se usa en plural/colectivo.
 
+**Usuario**:
+Persona con credenciales (email y contraseña) para entrar al panel de un Negocio. No confundir con el Cliente.
+_Avoid_: cuenta, admin, dueño
+
 **Rubro**:
 Categoría a la que pertenece un Negocio (clínica, spa, gimnasio, academia…).
 _Avoid_: categoría, industria
+
+### Acceso
+
+**Proveedor de identidad**:
+Servicio externo (Google, Microsoft) con el que un Usuario puede registrarse e iniciar sesión en vez de usar contraseña.
+_Avoid_: provider, OAuth
+
+**Método de registro**:
+Cómo se registra un Usuario, derivado de su email: con un Proveedor de identidad o con contraseña.
+_Avoid_: sign-up method, tipo de cuenta
+
+**Sesión**:
+Período durante el cual un Usuario queda identificado, desde que se registra o inicia sesión hasta que cierra sesión o la sesión vence.
+_Avoid_: login (como sustantivo)
+
+**Iniciar sesión**:
+Acción del Usuario de identificarse con sus credenciales para abrir una Sesión.
+_Avoid_: login, loguearse, entrar
+
+**Cerrar sesión**:
+Acción del Usuario de terminar su Sesión.
+_Avoid_: logout, log-out, desloguearse, salir
 
 ### Agenda
 

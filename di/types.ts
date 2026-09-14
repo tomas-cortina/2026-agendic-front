@@ -1,28 +1,50 @@
+import type { IUsersRepository } from '@/src/application/repositories/users.repository.interface';
+import type { IAuthenticationService } from '@/src/application/services/authentication.service.interface';
 import type { ICrashReporterService } from '@/src/application/services/crash-reporter.service.interface';
 import type { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
 import type { IResolveSignUpMethodUseCase } from '@/src/application/use-cases/auth/resolve-sign-up-method.use-case';
+import type { ISignInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
+import type { ISignUpUseCase } from '@/src/application/use-cases/auth/sign-up.use-case';
 import type { IResolveSignUpMethodController } from '@/src/interface-adapters/controllers/auth/resolve-sign-up-method.controller';
+import type { ISignInController } from '@/src/interface-adapters/controllers/auth/sign-in.controller';
+import type { ISignUpController } from '@/src/interface-adapters/controllers/auth/sign-up.controller';
 
 export const DI_SYMBOLS = {
     // Services
     IInstrumentationService: Symbol.for('IInstrumentationService'),
     ICrashReporterService: Symbol.for('ICrashReporterService'),
+    IAuthenticationService: Symbol.for('IAuthenticationService'),
+
+    // Repositories
+    IUsersRepository: Symbol.for('IUsersRepository'),
 
     // Use cases
     IResolveSignUpMethodUseCase: Symbol.for('IResolveSignUpMethodUseCase'),
+    ISignUpUseCase: Symbol.for('ISignUpUseCase'),
+    ISignInUseCase: Symbol.for('ISignInUseCase'),
 
     // Controllers
     IResolveSignUpMethodController: Symbol.for('IResolveSignUpMethodController'),
+    ISignUpController: Symbol.for('ISignUpController'),
+    ISignInController: Symbol.for('ISignInController'),
 };
 
 export interface DI_RETURN_TYPES {
     // Services
     IInstrumentationService: IInstrumentationService;
     ICrashReporterService: ICrashReporterService;
+    IAuthenticationService: IAuthenticationService;
+
+    // Repositories
+    IUsersRepository: IUsersRepository;
 
     // Use cases
     IResolveSignUpMethodUseCase: IResolveSignUpMethodUseCase;
+    ISignUpUseCase: ISignUpUseCase;
+    ISignInUseCase: ISignInUseCase;
 
     // Controllers
     IResolveSignUpMethodController: IResolveSignUpMethodController;
+    ISignUpController: ISignUpController;
+    ISignInController: ISignInController;
 }

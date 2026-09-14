@@ -1,8 +1,11 @@
 'use server';
 
+import { redirect } from 'next/navigation';
 import { getInjection } from '@/di/container';
+import { EmailTakenError } from '@/src/entities/errors/auth';
 import { InputParseError } from '@/src/entities/errors/common';
 import type { SignUpMethod } from '@/src/entities/models/sign-up-method';
+import { setSessionCookie } from '../session-cookie';
 
 export type ResolveSignUpMethodResult =
     | { method: SignUpMethod }
@@ -30,15 +33,25 @@ export type SignUpState = {
 
 export async function signUp(
     _prevState: SignUpState,
-    _formData: FormData,
+    formData: FormData,
 ): Promise<SignUpState> {
-    // TODO: once the sign-up feature exists, replace this stub with:
-    //   const controller = getInjection('ISignUpController');
-    //   try {
-    //       const { data } = await controller({ email, name, password });
-    //       set the session cookie, then redirect('/dashboard');
-    //   } catch (error) {
-    //       branch on `instanceof` for each entities error → return { error: message };
-    //       report anything unrecognized through ICrashReporterService.
-    return { error: 'La creación de cuenta todavía no está disponible.' };
+    try {
+        const controller = getInjection('ISignUpController');
+        const session = await controller({
+            email: formData.get('email')?.toString(),
+            name: formData.get('name')?.toString(),
+            password: formData.get('password')?.toString(),
+        });
+        await setSessionCookie(session);
+    } catch (error) {
+        if (error instanceof InputParseError) {
+            return { error: 'Revisá los datos: un email válido, tu nombre y una contraseña de 12 a 72 caracteres.' };
+        }
+        if (error instanceof EmailTakenError) {
+            return { error: 'Ya existe una cuenta con ese email. Iniciá sesión.' };
+        }
+        getInjection('ICrashReporterService').report(error);
+        return { error: 'Algo salió mal. Probá de nuevo.' };
+    }
+    redirect('/');
 }
