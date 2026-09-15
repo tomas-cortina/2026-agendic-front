@@ -6,7 +6,7 @@ import { Card } from '@/app/_components/ui/card';
 import { Button } from '@/app/_components/ui/button';
 import { Switch } from '@/app/_components/ui/switch';
 import { cn } from '@/app/_components/utils';
-import type { DaySchedule, Schedule, ScheduleDetail as ScheduleDetailData, ScheduleOverrideKind } from './types';
+import type { DaySchedule, Schedule, ScheduleDetail as ScheduleDetailData, ScheduleOverrideKind } from '@/app/(app)/_components/types';
 
 const OVERRIDE_ACCENT: Record<ScheduleOverrideKind, string> = {
     feriado: 'bg-destructive',

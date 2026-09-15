@@ -8,7 +8,7 @@ import { Button } from '@/app/_components/ui/button';
 import { Avatar, AvatarFallback } from '@/app/_components/ui/avatar';
 import { Tabs, TabsList, TabsTrigger } from '@/app/_components/ui/tabs';
 import { cn } from '@/app/_components/utils';
-import type { TabId, TurnoEstado, TurnoItem, TurnosByTab } from './types';
+import type { TabId, TurnoEstado, TurnoItem, TurnosByTab } from '@/app/(app)/_components/types';
 
 const TABS: { id: TabId; label: string }[] = [
     { id: 'proximos', label: 'Próximos' },

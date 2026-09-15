@@ -8,7 +8,7 @@ Sign-up and sign-in follow nikolovlazar/nextjs-clean-architecture, with three de
 
 The sign-up wizard's email step still runs `resolveSignUpMethodUseCase`, but its domain→Proveedor de identidad mapping is emptied, so every email currently resolves to `'password'`. The Proveedor de identidad UI (`ProviderButton`, `ProviderRedirectStep`) stays in the tree, unused, as a head start for the OAuth ticket, rather than being deleted and rebuilt.
 
-This feature includes sign-out and a minimal "is this session still valid" check, used by the root layout to show the signed-in Usuario's name and a sign-out control in the `Header`. It does not include full route protection: no page requires a session yet, and there's no `proxy.ts` guard. That's why `IAuthenticationService` gets `validateSession` now (throwing `UnauthenticatedError` for a missing, unknown or expired session), while enforcing it on protected routes is a separate, later ticket. A stale cookie left behind by a server restart is not cleared: the Header just renders signed-out until the next sign-in overwrites it.
+This feature includes sign-out and a minimal "is this session still valid" check, used by the `(public)` layout to show the signed-in Usuario's name and a sign-out control in the `Header`, and by the `(app)` layout to redirect to `/sign-in`. `proxy.ts` guards the same routes optimistically (cookie presence only); `IAuthenticationService.validateSession` (throwing `UnauthenticatedError` for a missing, unknown or expired session) does the real check. A stale cookie left behind by a server restart is not cleared: the Header just renders signed-out until the next sign-in overwrites it.
 
 ## Consequences
 

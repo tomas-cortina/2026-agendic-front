@@ -1,3 +1,7 @@
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
     Calendar,
     Clock,
@@ -28,18 +32,10 @@ const ICONS: Record<SectionId, React.ComponentType<{ className?: string }>> = {
 
 const ITEM = 'flex w-full items-center gap-2.5 rounded-[10px] px-2.5 py-2 text-left font-semibold transition-colors hover:bg-muted';
 
-export function Sidebar({
-    user,
-    navItems,
-    activeSection,
-    onSelectSection,
-}: {
-    user: CurrentBusinessUser;
-    navItems: NavItem[];
-    activeSection: SectionId;
-    onSelectSection: (section: SectionId) => void;
-}) {
-    const tone = (id: SectionId) => (id === activeSection ? 'bg-secondary text-primary' : 'text-muted-foreground');
+export function Sidebar({ user, navItems }: { user: CurrentBusinessUser; navItems: NavItem[] }) {
+    const pathname = usePathname();
+    const isActive = (id: SectionId) => pathname.startsWith(`/${id}`);
+    const tone = (id: SectionId) => (isActive(id) ? 'bg-secondary text-primary' : 'text-muted-foreground');
 
     return (
         <aside className="flex w-[248px] shrink-0 flex-col gap-5 border-r border-border bg-white p-3.5 pt-4.5">
@@ -60,11 +56,10 @@ export function Sidebar({
                 {navItems.map((item) => {
                     const Icon = ICONS[item.id];
                     return (
-                        <button
+                        <Link
                             key={item.id}
-                            type="button"
-                            onClick={() => onSelectSection(item.id)}
-                            aria-current={item.id === activeSection ? 'page' : undefined}
+                            href={`/${item.id}`}
+                            aria-current={isActive(item.id) ? 'page' : undefined}
                             className={cn(ITEM, 'text-[13.5px] tracking-[-0.01em]', tone(item.id))}
                         >
                             <Icon className="size-[18px]" />
@@ -74,7 +69,7 @@ export function Sidebar({
                                     {item.count}
                                 </Badge>
                             ) : null}
-                        </button>
+                        </Link>
                     );
                 })}
             </nav>
@@ -88,15 +83,14 @@ export function Sidebar({
                     <LinkIcon className="size-[17px]" />
                     Copiar link para reservar
                 </button>
-                <button
-                    type="button"
-                    onClick={() => onSelectSection('config')}
-                    aria-current={activeSection === 'config' ? 'page' : undefined}
+                <Link
+                    href="/config"
+                    aria-current={isActive('config') ? 'page' : undefined}
                     className={cn(ITEM, 'text-[13px]', tone('config'))}
                 >
                     <Settings className="size-[17px]" />
                     Configuración
-                </button>
+                </Link>
             </div>
 
             <div className="flex items-center gap-2 border-t border-border px-2 pt-3">

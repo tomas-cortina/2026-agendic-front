@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { signOut } from '@/app/(auth)/actions';
-import type { CurrentUser } from '@/app/(auth)/current-user';
+import { signOut } from '@/app/(public)/(auth)/actions';
+import type { CurrentUser } from '@/app/(public)/(auth)/current-user';
 import { Button } from './ui/button';
 
 export function Header({ user }: { user: CurrentUser | null }) {

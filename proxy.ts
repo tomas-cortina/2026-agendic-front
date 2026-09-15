@@ -1,8 +1,16 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// No page requires a Sesión yet (docs/adr/0001-in-memory-auth-custom-sessions.md); add routes here once one does.
-const protectedRoutes: string[] = [];
+const protectedRoutes = [
+    '/turnos',
+    '/disponibilidad',
+    '/servicios',
+    '/staff',
+    '/sucursales',
+    '/clientes',
+    '/metricas',
+    '/config',
+];
 const authRoutes = ['/sign-in', '/sign-up'];
 
 // Optimistic check: only the cookie's presence, no session validation (recommended for Proxy, see Next.js authentication guide).
