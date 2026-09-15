@@ -1,20 +1,22 @@
-import { getInjection } from '@/di/container';
+import { signOutUseCase } from '@/src/application/use-cases/auth/sign-out.use-case';
 import { UnauthenticatedError } from '@/src/entities/errors/auth';
-
-const signUpUseCase = getInjection('ISignUpUseCase');
-const signOutUseCase = getInjection('ISignOutUseCase');
-const getCurrentUserController = getInjection('IGetCurrentUserController');
+import { authWith, instrumentation } from '@/tests/unit/stubs';
 
 describe('signOutUseCase', () => {
-    it('ends the session so it no longer validates', async () => {
-        const session = await signUpUseCase({
-            email: 'ana@negocio.com',
-            name: 'Ana Pérez',
-            password: 'correct horse battery',
-        });
+    it('invalidates the Sesión on the back', async () => {
+        const invalidateSession = jest.fn().mockResolvedValue(undefined);
 
-        await signOutUseCase(session.id);
+        await expect(signOutUseCase(instrumentation, authWith({ invalidateSession }))('session-123')).resolves.toBeUndefined();
+        expect(invalidateSession).toHaveBeenCalledWith('session-123');
+    });
 
-        await expect(getCurrentUserController(session.id)).rejects.toBeInstanceOf(UnauthenticatedError);
+    it('throws UnauthenticatedError when the back rejects the Sesión', async () => {
+        const invalidateSession = jest
+            .fn()
+            .mockRejectedValue(new UnauthenticatedError('Missing, expired or signed-out session'));
+
+        await expect(
+            signOutUseCase(instrumentation, authWith({ invalidateSession }))('session-123'),
+        ).rejects.toBeInstanceOf(UnauthenticatedError);
     });
 });

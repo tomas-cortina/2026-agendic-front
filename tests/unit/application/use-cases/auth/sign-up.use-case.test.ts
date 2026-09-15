@@ -1,29 +1,23 @@
-import { getInjection } from '@/di/container';
+import { signUpUseCase } from '@/src/application/use-cases/auth/sign-up.use-case';
 import { EmailTakenError } from '@/src/entities/errors/auth';
+import { authWith, instrumentation } from '@/tests/unit/stubs';
 
-const signUpUseCase = getInjection('ISignUpUseCase');
-const authenticationService = getInjection('IAuthenticationService');
+const newUsuario = { email: 'ana@negocio.com', name: 'Ana Pérez', password: 'correct horse battery' };
+const session = { id: 'session-123', expiresAt: new Date('2026-10-14T00:00:00.000Z') };
 
 describe('signUpUseCase', () => {
-    it('creates the Usuario and returns a Sesión that identifies them', async () => {
-        const session = await signUpUseCase({
-            email: 'ana@negocio.com',
-            name: 'Ana Pérez',
-            password: 'correct horse battery',
-        });
+    it('registers the Usuario and returns the Sesión the back issued', async () => {
+        const signUp = jest.fn().mockResolvedValue(session);
 
-        await expect(authenticationService.getCurrentUser(session.id)).resolves.toMatchObject({
-            email: 'ana@negocio.com',
-            name: 'Ana Pérez',
-            role: 'USER',
-        });
+        await expect(signUpUseCase(instrumentation, authWith({ signUp }))(newUsuario)).resolves.toEqual(session);
+        expect(signUp).toHaveBeenCalledWith(newUsuario);
     });
 
     it('throws EmailTakenError when the email is already registered', async () => {
-        await signUpUseCase({ email: 'beto@negocio.com', name: 'Beto', password: 'correct horse battery' });
+        const signUp = jest.fn().mockRejectedValue(new EmailTakenError('Email is already registered'));
 
-        await expect(
-            signUpUseCase({ email: 'beto@negocio.com', name: 'Otro Beto', password: 'another long password' }),
-        ).rejects.toBeInstanceOf(EmailTakenError);
+        await expect(signUpUseCase(instrumentation, authWith({ signUp }))(newUsuario)).rejects.toBeInstanceOf(
+            EmailTakenError,
+        );
     });
 });

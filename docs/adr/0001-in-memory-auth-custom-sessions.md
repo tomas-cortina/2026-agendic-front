@@ -1,5 +1,5 @@
 ---
-status: superseded by 2026-agendic-back ADR 0002 and issue #1 — the back owns Usuario, passwords and Sesión; the front's `AuthenticationService` is an HTTP adapter to it (`API_BASE_URL`) and the in-memory store survives only as the test mock
+status: superseded by 2026-agendic-back ADR 0002 and issue #1 — the back owns Usuario, passwords and Sesión; the front's `AuthenticationService` is an HTTP adapter to it (`API_BASE_URL`) and the in-memory mock was removed; unit tests stub the port per case
 ---
 
 # In-memory auth with hand-rolled sessions

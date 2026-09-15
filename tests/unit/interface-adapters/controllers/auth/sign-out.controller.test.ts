@@ -1,29 +1,32 @@
-import { getInjection } from '@/di/container';
 import { UnauthenticatedError } from '@/src/entities/errors/auth';
-
-const signUpController = getInjection('ISignUpController');
-const signOutController = getInjection('ISignOutController');
-const getCurrentUserController = getInjection('IGetCurrentUserController');
-
-const valid = { email: 'ana@negocio.com', name: 'Ana Pérez', password: 'correct horse battery' };
+import { signOutController } from '@/src/interface-adapters/controllers/auth/sign-out.controller';
+import { instrumentation } from '@/tests/unit/stubs';
 
 describe('signOutController', () => {
     it('ends the session for a signed-in Usuario', async () => {
-        const { sessionId } = await signUpController(valid);
+        const signOutUseCase = jest.fn().mockResolvedValue(undefined);
 
-        await signOutController(sessionId);
-
-        await expect(getCurrentUserController(sessionId)).rejects.toBeInstanceOf(UnauthenticatedError);
+        await expect(signOutController(instrumentation, signOutUseCase)('session-123')).resolves.toBeUndefined();
+        expect(signOutUseCase).toHaveBeenCalledWith('session-123');
     });
 
     it('throws UnauthenticatedError when there is no session id', async () => {
-        await expect(signOutController(undefined)).rejects.toBeInstanceOf(UnauthenticatedError);
+        const signOutUseCase = jest.fn();
+
+        await expect(signOutController(instrumentation, signOutUseCase)(undefined)).rejects.toBeInstanceOf(
+            UnauthenticatedError,
+        );
+        expect(signOutUseCase).not.toHaveBeenCalled();
     });
 
-    it('throws UnauthenticatedError for an already-closed session', async () => {
-        const { sessionId } = await signUpController({ ...valid, email: 'beto@negocio.com' });
-        await signOutController(sessionId);
+    // Covers an already-closed Sesión: the back answers 401.
+    it('throws UnauthenticatedError when the back rejects the session', async () => {
+        const signOutUseCase = jest
+            .fn()
+            .mockRejectedValue(new UnauthenticatedError('Missing, expired or signed-out session'));
 
-        await expect(signOutController(sessionId)).rejects.toBeInstanceOf(UnauthenticatedError);
+        await expect(signOutController(instrumentation, signOutUseCase)('session-123')).rejects.toBeInstanceOf(
+            UnauthenticatedError,
+        );
     });
 });

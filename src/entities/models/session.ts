@@ -5,5 +5,3 @@ export const sessionSchema = z.object({
     expiresAt: z.date(),
 });
 export type Session = z.infer<typeof sessionSchema>;
-
-export const isSessionExpired = (session: Session) => session.expiresAt < new Date();

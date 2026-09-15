@@ -5,7 +5,6 @@ import { signInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case
 import { signOutUseCase } from '@/src/application/use-cases/auth/sign-out.use-case';
 import { signUpUseCase } from '@/src/application/use-cases/auth/sign-up.use-case';
 import { AuthenticationService } from '@/src/infrastructure/services/authentication.service';
-import { MockAuthenticationService } from '@/src/infrastructure/services/authentication.service.mock';
 import { getCurrentUserController } from '@/src/interface-adapters/controllers/auth/get-current-user.controller';
 import { resolveSignUpMethodController } from '@/src/interface-adapters/controllers/auth/resolve-sign-up-method.controller';
 import { signInController } from '@/src/interface-adapters/controllers/auth/sign-in.controller';
@@ -15,16 +14,12 @@ import { signUpController } from '@/src/interface-adapters/controllers/auth/sign
 export function createAuthModule() {
     const authModule = createModule();
 
-    if (process.env.NODE_ENV === 'test') {
-        authModule.bind(DI_SYMBOLS.IAuthenticationService).toClass(MockAuthenticationService);
-    } else {
-        // Read on first use, not at import, so `next build` doesn't need the back's URL.
-        authModule.bind(DI_SYMBOLS.IAuthenticationService).toFactory(() => {
-            const apiBaseUrl = process.env.API_BASE_URL;
-            if (!apiBaseUrl) throw new Error('API_BASE_URL is not set');
-            return new AuthenticationService(apiBaseUrl);
-        });
-    }
+    // Read on first use, not at import, so `next build` doesn't need the back's URL.
+    authModule.bind(DI_SYMBOLS.IAuthenticationService).toFactory(() => {
+        const apiBaseUrl = process.env.API_BASE_URL;
+        if (!apiBaseUrl) throw new Error('API_BASE_URL is not set');
+        return new AuthenticationService(apiBaseUrl);
+    });
 
     authModule
         .bind(DI_SYMBOLS.IResolveSignUpMethodUseCase)

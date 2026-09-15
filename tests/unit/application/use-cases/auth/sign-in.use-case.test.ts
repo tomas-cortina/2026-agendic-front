@@ -1,33 +1,23 @@
-import { getInjection } from '@/di/container';
+import { signInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
 import { AuthenticationError } from '@/src/entities/errors/auth';
-
-const signUpUseCase = getInjection('ISignUpUseCase');
-const signInUseCase = getInjection('ISignInUseCase');
-const authenticationService = getInjection('IAuthenticationService');
+import { authWith, instrumentation } from '@/tests/unit/stubs';
 
 const credentials = { email: 'ana@negocio.com', password: 'correct horse battery' };
-
-beforeAll(async () => {
-    await signUpUseCase({ ...credentials, name: 'Ana Pérez' });
-});
+const session = { id: 'session-123', expiresAt: new Date('2026-10-14T00:00:00.000Z') };
 
 describe('signInUseCase', () => {
-    it('returns a Sesión that identifies the Usuario with valid credentials', async () => {
-        const session = await signInUseCase(credentials);
+    it('returns the Sesión the back issued for the credentials', async () => {
+        const signIn = jest.fn().mockResolvedValue(session);
 
-        await expect(authenticationService.getCurrentUser(session.id)).resolves.toMatchObject({
-            email: credentials.email,
-        });
+        await expect(signInUseCase(instrumentation, authWith({ signIn }))(credentials)).resolves.toEqual(session);
+        expect(signIn).toHaveBeenCalledWith(credentials);
     });
 
-    it('throws AuthenticationError for an unknown email', async () => {
-        await expect(signInUseCase({ ...credentials, email: 'nadie@negocio.com' })).rejects.toBeInstanceOf(
-            AuthenticationError,
-        );
-    });
+    // Unknown email and wrong password are one case: the back decides, and answers 401 to both.
+    it('throws AuthenticationError when the back rejects the credentials', async () => {
+        const signIn = jest.fn().mockRejectedValue(new AuthenticationError('Invalid email or password'));
 
-    it('throws AuthenticationError for a wrong password', async () => {
-        await expect(signInUseCase({ ...credentials, password: 'wrong password' })).rejects.toBeInstanceOf(
+        await expect(signInUseCase(instrumentation, authWith({ signIn }))(credentials)).rejects.toBeInstanceOf(
             AuthenticationError,
         );
     });
