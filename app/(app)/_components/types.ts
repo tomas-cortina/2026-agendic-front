@@ -5,8 +5,7 @@ export type SectionId =
     | 'staff'
     | 'sucursales'
     | 'clientes'
-    | 'metricas'
-    | 'config';
+    | 'metricas';
 
 export type TabId = 'proximos' | 'pendientes' | 'pasados' | 'cancelados';
 

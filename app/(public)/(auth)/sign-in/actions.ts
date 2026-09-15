@@ -28,5 +28,5 @@ export async function signIn(
         getInjection('ICrashReporterService').report(error);
         return { error: 'Algo salió mal. Probá de nuevo.' };
     }
-    redirect('/');
+    redirect('/turnos');
 }

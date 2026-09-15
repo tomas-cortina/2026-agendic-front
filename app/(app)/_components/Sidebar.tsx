@@ -16,6 +16,13 @@ import {
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarBadge } from '@/app/_components/ui/avatar';
 import { Badge } from '@/app/_components/ui/badge';
+import {
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuItem,
+} from '@/app/_components/ui/dropdown-menu';
+import { signOut } from '@/app/(public)/(auth)/actions';
 import { cn } from '@/app/_components/utils';
 import type { CurrentBusinessUser, NavItem, SectionId } from './types';
 
@@ -27,7 +34,6 @@ const ICONS: Record<SectionId, React.ComponentType<{ className?: string }>> = {
     sucursales: Building2,
     clientes: UserRound,
     metricas: BarChart3,
-    config: Settings,
 };
 
 const ITEM = 'flex w-full items-center gap-2.5 rounded-[10px] px-2.5 py-2 text-left font-semibold transition-colors hover:bg-muted';
@@ -83,14 +89,26 @@ export function Sidebar({ user, navItems }: { user: CurrentBusinessUser; navItem
                     <LinkIcon className="size-[17px]" />
                     Copiar link para reservar
                 </button>
-                <Link
-                    href="/config"
-                    aria-current={isActive('config') ? 'page' : undefined}
-                    className={cn(ITEM, 'text-[13px]', tone('config'))}
-                >
-                    <Settings className="size-[17px]" />
-                    Configuración
-                </Link>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button
+                            type="button"
+                            className={cn(ITEM, 'text-[13px] text-muted-foreground hover:text-foreground')}
+                        >
+                            <Settings className="size-[17px]" />
+                            Configuración
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent side="top" align="start">
+                        <DropdownMenuItem asChild>
+                            <form action={signOut} className="w-full">
+                                <button type="submit" className="w-full text-left">
+                                    Cerrar sesión
+                                </button>
+                            </form>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
 
             <div className="flex items-center gap-2 border-t border-border px-2 pt-3">
