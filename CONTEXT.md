@@ -97,6 +97,14 @@ _Avoid_: eliminar, borrar, desactivar
 Turno al que el Cliente no se presentó sin cancelarlo.
 _Avoid_: inasistencia, no-show
 
+**Aceptar turno**:
+Acción del Negocio de dar por válido un Turno pendiente, es decir, uno que no quedó aceptado automáticamente al reservarse.
+_Avoid_: confirmar (a secas, se confunde con Confirmación de asistencia)
+
+**Rechazar turno**:
+Acción del Negocio de no aceptar un Turno pendiente. Libera el horario.
+_Avoid_: cancelar (eso aplica a un turno ya aceptado)
+
 ### Comunicación
 
 **Confirmación de reserva**:
