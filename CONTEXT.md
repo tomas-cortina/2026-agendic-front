@@ -11,7 +11,7 @@ Quien contrata Agendic para gestionar su agenda. Es el destinatario de la landin
 _Avoid_: empresa, cuenta, cliente (cuando se refiere al negocio)
 
 **Cliente**:
-Persona que reserva turnos en un Negocio. Nunca designa al Negocio.
+Usuario que reserva Turnos en un Negocio. Nunca designa al Negocio.
 _Avoid_: usuario final, paciente, consumidor
 
 **Sucursal**:
@@ -19,19 +19,27 @@ Sede física de un Negocio, con horarios propios. Un Negocio puede tener varias.
 _Avoid_: sede, local
 
 **Profesional**:
-Persona de un Negocio que atiende turnos.
+Usuario que atiende Turnos en una o más Sucursales, que pueden ser de distintos Negocios.
 _Avoid_: staff (en singular), recurso, empleado
 
 **Staff**:
 El conjunto de profesionales de un Negocio. Solo se usa en plural/colectivo.
 
 **Especialidad**:
-Área en la que se desempeña un Profesional (kinesiología, colorimetría…). Es descriptiva: no limita qué Servicios puede atender.
+Área en la que se desempeña un Profesional (kinesiología, colorimetría…). Es descriptiva: no limita qué Servicios puede atender. Forman un catálogo común a toda la plataforma.
 _Avoid_: rubro (eso es del Negocio), categoría
 
 **Usuario**:
-Persona con credenciales (email y contraseña) para entrar al panel de un Negocio. No confundir con el Cliente.
-_Avoid_: cuenta, admin, dueño
+Persona con credenciales (email y contraseña) para entrar a Agendic. Un mismo Usuario puede ser Dueño, Profesional y/o Cliente.
+_Avoid_: cuenta, perfil
+
+**Dueño**:
+Usuario que creó un Negocio y lo gestiona. Un Usuario puede ser Dueño de varios Negocios.
+_Avoid_: owner, titular, admin
+
+**Administrador**:
+Usuario del equipo de Agendic que gestiona la plataforma (por ejemplo, el catálogo de Especialidades). No gestiona Negocios.
+_Avoid_: admin, superusuario
 
 **Rubro**:
 Categoría a la que pertenece un Negocio (clínica, spa, gimnasio, academia…).
@@ -66,7 +74,7 @@ Prestación que ofrece un Negocio, con duración y precio. No confundir con los 
 _Avoid_: prestación, tratamiento
 
 **Turno**:
-Reserva concreta de un Cliente con un Profesional en un horario determinado. Es el sustantivo; "reservar" es el verbo.
+Reserva concreta de un Cliente con un Profesional, para un Servicio, en una Sucursal y un horario determinados. Es el sustantivo; "reservar" es el verbo.
 _Avoid_: cita, reserva (como sustantivo), appointment
 
 **Reservar**:
