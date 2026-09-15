@@ -11,26 +11,22 @@ Quien contrata Agendic para gestionar su agenda. Es el destinatario de la landin
 _Avoid_: empresa, cuenta, cliente (cuando se refiere al negocio)
 
 **Cliente**:
-Usuario que reserva Turnos en un Negocio. Nunca designa al Negocio.
+Persona que reserva Turnos dejando un nombre y un email. No hace falta que sea un Usuario.
 _Avoid_: usuario final, paciente, consumidor
 
 **Sucursal**:
 Sede física de un Negocio, con horarios propios. Un Negocio puede tener varias.
 _Avoid_: sede, local
 
-**Profesional**:
-Usuario que atiende Turnos en una o más Sucursales, que pueden ser de distintos Negocios.
-_Avoid_: staff (en singular), recurso, empleado
+**Empleado**:
+Persona que atiende los Servicios de un Negocio, identificada por su nombre y su email dentro de ese Negocio. No hace falta que sea un Usuario.
+_Avoid_: recurso
 
 **Staff**:
-El conjunto de profesionales de un Negocio. Solo se usa en plural/colectivo.
-
-**Especialidad**:
-Área en la que se desempeña un Profesional (kinesiología, colorimetría…). Es descriptiva: no limita qué Servicios puede atender. Forman un catálogo común a toda la plataforma.
-_Avoid_: rubro (eso es del Negocio), categoría
+El conjunto de Empleados de un Negocio. Solo se usa en plural/colectivo.
 
 **Usuario**:
-Persona con credenciales (email y contraseña) para entrar a Agendic. Un mismo Usuario puede ser Dueño, Profesional y/o Cliente.
+Persona que verifica su email para obtener una Sesión. Puede ser Dueño de cero o más Negocios.
 _Avoid_: cuenta, perfil
 
 **Dueño**:
@@ -38,7 +34,7 @@ Usuario que creó un Negocio y lo gestiona. Un Usuario puede ser Dueño de vario
 _Avoid_: owner, titular, admin
 
 **Administrador**:
-Usuario del equipo de Agendic que gestiona la plataforma (por ejemplo, el catálogo de Especialidades). No gestiona Negocios.
+Usuario del equipo de Agendic que gestiona la plataforma. No gestiona Negocios.
 _Avoid_: admin, superusuario
 
 **Rubro**:
@@ -67,14 +63,18 @@ _Avoid_: login, loguearse, entrar
 Acción del Usuario de terminar su Sesión.
 _Avoid_: logout, log-out, desloguearse, salir
 
+**Verificar email**:
+Abrir el link enviado por email para probar que la dirección es real.
+_Avoid_: confirmar email
+
 ### Agenda
 
 **Servicio**:
-Prestación que ofrece un Negocio, con duración y precio. No confundir con los microservicios de la arquitectura.
+Prestación que ofrece una Sucursal, con duración y precio, atendida por uno o más Empleados. No confundir con los microservicios de la arquitectura.
 _Avoid_: prestación, tratamiento
 
 **Turno**:
-Reserva concreta de un Cliente con un Profesional, para un Servicio, en una Sucursal y un horario determinados. Es el sustantivo; "reservar" es el verbo.
+Reserva concreta de un Cliente con un Empleado, para un Servicio y un horario determinados. Es el sustantivo; "reservar" es el verbo.
 _Avoid_: cita, reserva (como sustantivo), appointment
 
 **Reservar**:
@@ -90,12 +90,16 @@ Anular un Turno. Su horario queda libre.
 _Avoid_: eliminar, borrar (un turno)
 
 **Dar de baja**:
-Retirar un Servicio de la agenda de un Negocio, o desvincular a un Profesional de un Negocio (su cuenta sigue existiendo). Sus Turnos futuros en ese Negocio quedan cancelados.
+Retirar un Servicio de la agenda de un Negocio, o retirar a un Empleado de un Negocio. Sus Turnos futuros en ese Negocio quedan cancelados.
 _Avoid_: eliminar, borrar, desactivar
 
 **Ausencia**:
 Turno al que el Cliente no se presentó sin cancelarlo.
 _Avoid_: inasistencia, no-show
+
+**Turno sin verificar**:
+Turno cuyo Cliente todavía no verificó su email. No mantiene reservado su horario.
+_Avoid_: pendiente (ese término queda reservado para Aceptar turno y Rechazar turno)
 
 **Aceptar turno**:
 Acción del Negocio de dar por válido un Turno pendiente, es decir, uno que no quedó aceptado automáticamente al reservarse.
