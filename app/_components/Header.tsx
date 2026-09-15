@@ -23,7 +23,9 @@ export function Header({ user }: { user: CurrentUser | null }) {
             <div className="flex items-center gap-2.5">
                 {user ? (
                     <>
-                        <span className="text-[15px] font-semibold text-foreground px-4 py-2.5">{user.name}</span>
+                        <span className="text-[15px] font-semibold text-foreground px-4 py-2.5">
+                            {user.name}
+                        </span>
                         <form action={signOut}>
                             <Button
                                 type="submit"
@@ -41,7 +43,10 @@ export function Header({ user }: { user: CurrentUser | null }) {
                             variant="ghost"
                             className="text-[15px] font-semibold text-foreground px-4 py-2.5 hover:text-primary transition-colors h-auto"
                         >
-                            <Link href="/sign-in" transitionTypes={['auth-nav']}>
+                            <Link
+                                href="/sign-in"
+                                transitionTypes={['auth-nav']}
+                            >
                                 Ir a mi cuenta
                             </Link>
                         </Button>
@@ -49,7 +54,10 @@ export function Header({ user }: { user: CurrentUser | null }) {
                             asChild
                             className="text-[15px] font-bold text-white bg-primary px-[18px] py-[11px] rounded-[10px] hover:bg-primary/90 transition-colors h-auto"
                         >
-                            <Link href="/sign-up" transitionTypes={['auth-nav']}>
+                            <Link
+                                href="/sign-up"
+                                transitionTypes={['auth-nav']}
+                            >
                                 Empezá gratis
                             </Link>
                         </Button>
