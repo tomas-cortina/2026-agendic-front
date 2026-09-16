@@ -11,13 +11,22 @@ import { AuthenticationService } from '@/src/infrastructure/services/authenticat
 const API_BASE_URL = 'http://back.test';
 const authenticationService = new AuthenticationService(API_BASE_URL);
 
-const newUsuario = { email: 'ana@negocio.com', name: 'Ana Pérez', password: 'correct horse battery' };
-const issuedSession = { sessionId: 'session-123', expiresAt: '2026-10-14T00:00:00.000Z' };
+const newUsuario = {
+    email: 'ana@negocio.com',
+    name: 'Ana Pérez',
+    password: 'correct horse battery',
+};
+const issuedSession = {
+    sessionId: 'session-123',
+    expiresAt: '2026-10-14T00:00:00.000Z',
+};
 
 const backendResponds = (status: number, body?: unknown) =>
-    jest
-        .spyOn(global, 'fetch')
-        .mockResolvedValue(new Response(body === undefined ? null : JSON.stringify(body), { status }));
+    jest.spyOn(global, 'fetch').mockResolvedValue(
+        new Response(body === undefined ? null : JSON.stringify(body), {
+            status,
+        }),
+    );
 
 afterEach(() => jest.restoreAllMocks());
 
@@ -26,124 +35,190 @@ describe('AuthenticationService', () => {
         it('POSTs the new Usuario to /users without parsing a response', async () => {
             const fetchMock = backendResponds(201);
 
-            await expect(authenticationService.signUp(newUsuario)).resolves.toBeUndefined();
+            await expect(
+                authenticationService.signUp(newUsuario),
+            ).resolves.toBeUndefined();
             expect(fetchMock).toHaveBeenCalledWith(
                 'http://back.test/users',
-                expect.objectContaining({ method: 'POST', body: JSON.stringify(newUsuario) }),
+                expect.objectContaining({
+                    method: 'POST',
+                    body: JSON.stringify(newUsuario),
+                }),
             );
         });
 
         it('throws EmailTakenError when the back answers 409', async () => {
-            backendResponds(409, { statusCode: 409, message: 'Email already registered' });
+            backendResponds(409, {
+                statusCode: 409,
+                message: 'Email already registered',
+            });
 
-            await expect(authenticationService.signUp(newUsuario)).rejects.toBeInstanceOf(EmailTakenError);
+            await expect(
+                authenticationService.signUp(newUsuario),
+            ).rejects.toBeInstanceOf(EmailTakenError);
         });
 
         it('throws BackendValidationError when the back rejects the input with 400', async () => {
-            backendResponds(400, { statusCode: 400, message: ['password must be longer than or equal to 12 characters'] });
+            backendResponds(400, {
+                statusCode: 400,
+                message: [
+                    'password must be longer than or equal to 12 characters',
+                ],
+            });
 
-            await expect(authenticationService.signUp(newUsuario)).rejects.toBeInstanceOf(BackendValidationError);
+            await expect(
+                authenticationService.signUp(newUsuario),
+            ).rejects.toBeInstanceOf(BackendValidationError);
         });
     });
 
     describe('signIn', () => {
-        const credentials = { email: newUsuario.email, password: newUsuario.password };
+        const credentials = {
+            email: newUsuario.email,
+            password: newUsuario.password,
+        };
 
         it('POSTs the credentials to /sessions and returns the Sesión the back issued', async () => {
             const fetchMock = backendResponds(201, issuedSession);
 
-            await expect(authenticationService.signIn(credentials)).resolves.toEqual({
+            await expect(
+                authenticationService.signIn(credentials),
+            ).resolves.toEqual({
                 id: 'session-123',
                 expiresAt: new Date('2026-10-14T00:00:00.000Z'),
             });
             expect(fetchMock).toHaveBeenCalledWith(
                 'http://back.test/sessions',
-                expect.objectContaining({ method: 'POST', body: JSON.stringify(credentials) }),
+                expect.objectContaining({
+                    method: 'POST',
+                    body: JSON.stringify(credentials),
+                }),
             );
         });
 
         it('throws AuthenticationError when the back answers 401', async () => {
-            backendResponds(401, { statusCode: 401, message: 'Invalid email or password' });
+            backendResponds(401, {
+                statusCode: 401,
+                message: 'Invalid email or password',
+            });
 
-            await expect(authenticationService.signIn(credentials)).rejects.toBeInstanceOf(AuthenticationError);
+            await expect(
+                authenticationService.signIn(credentials),
+            ).rejects.toBeInstanceOf(AuthenticationError);
         });
     });
 
     describe('verifyEmail', () => {
         const token = 'verification-token-abc';
 
-        it('POSTs the token to /sessions/verifications and returns the Sesión the back issued', async () => {
+        it('POSTs the token to /users/verification and returns the Sesión the back issued', async () => {
             const fetchMock = backendResponds(201, issuedSession);
 
-            await expect(authenticationService.verifyEmail(token)).resolves.toEqual({
+            await expect(
+                authenticationService.verifyEmail(token),
+            ).resolves.toEqual({
                 id: 'session-123',
                 expiresAt: new Date('2026-10-14T00:00:00.000Z'),
             });
             expect(fetchMock).toHaveBeenCalledWith(
-                'http://back.test/sessions/verifications',
-                expect.objectContaining({ method: 'POST', body: JSON.stringify({ token }) }),
+                'http://back.test/users/verification',
+                expect.objectContaining({
+                    method: 'POST',
+                    body: JSON.stringify({ token }),
+                }),
             );
         });
 
         it('throws VerificationLinkExpiredError when the back answers 410', async () => {
-            backendResponds(410, { statusCode: 410, message: 'Verification link expired' });
+            backendResponds(410, {
+                statusCode: 410,
+                message: 'Verification link expired',
+            });
 
-            await expect(authenticationService.verifyEmail(token)).rejects.toBeInstanceOf(
-                VerificationLinkExpiredError,
-            );
+            await expect(
+                authenticationService.verifyEmail(token),
+            ).rejects.toBeInstanceOf(VerificationLinkExpiredError);
         });
 
         // Invalid, already used and tampered-with all arrive as 400: the Usuario reads the same message.
         it('throws VerificationLinkInvalidError when the back answers 400', async () => {
-            backendResponds(400, { statusCode: 400, message: 'Invalid verification token' });
+            backendResponds(400, {
+                statusCode: 400,
+                message: 'Invalid verification token',
+            });
 
-            await expect(authenticationService.verifyEmail(token)).rejects.toBeInstanceOf(
-                VerificationLinkInvalidError,
-            );
+            await expect(
+                authenticationService.verifyEmail(token),
+            ).rejects.toBeInstanceOf(VerificationLinkInvalidError);
         });
 
         it('attaches the answer from the back as the cause', async () => {
-            backendResponds(410, { statusCode: 410, message: 'Verification link expired' });
+            backendResponds(410, {
+                statusCode: 410,
+                message: 'Verification link expired',
+            });
 
-            await expect(authenticationService.verifyEmail(token)).rejects.toMatchObject({
-                cause: { statusCode: 410, message: 'Verification link expired' },
+            await expect(
+                authenticationService.verifyEmail(token),
+            ).rejects.toMatchObject({
+                cause: {
+                    statusCode: 410,
+                    message: 'Verification link expired',
+                },
             });
         });
     });
 
     describe('resendVerification', () => {
-        it('POSTs the email to /users/verifications and treats 202 as success', async () => {
+        it('POSTs the email to /users/verification/resend and treats 202 as success', async () => {
             const fetchMock = backendResponds(202);
 
-            await expect(authenticationService.resendVerification(newUsuario.email)).resolves.toBeUndefined();
+            await expect(
+                authenticationService.resendVerification(newUsuario.email),
+            ).resolves.toBeUndefined();
             expect(fetchMock).toHaveBeenCalledWith(
-                'http://back.test/users/verifications',
-                expect.objectContaining({ method: 'POST', body: JSON.stringify({ email: newUsuario.email }) }),
+                'http://back.test/users/verification/resend',
+                expect.objectContaining({
+                    method: 'POST',
+                    body: JSON.stringify({ email: newUsuario.email }),
+                }),
             );
         });
     });
 
     describe('getCurrentUser', () => {
         it('GETs /users/me with the Sesión as a Bearer token and returns the Usuario', async () => {
-            const usuario = { id: 7, name: 'Ana Pérez', email: 'ana@negocio.com', role: 'USER' };
+            const usuario = {
+                id: 7,
+                name: 'Ana Pérez',
+                email: 'ana@negocio.com',
+                role: 'USER',
+            };
             const fetchMock = backendResponds(200, usuario);
 
-            await expect(authenticationService.getCurrentUser('session-123')).resolves.toEqual(usuario);
+            await expect(
+                authenticationService.getCurrentUser('session-123'),
+            ).resolves.toEqual(usuario);
             expect(fetchMock).toHaveBeenCalledWith(
                 'http://back.test/users/me',
                 expect.objectContaining({
                     method: 'GET',
-                    headers: expect.objectContaining({ Authorization: 'Bearer session-123' }),
+                    headers: expect.objectContaining({
+                        Authorization: 'Bearer session-123',
+                    }),
                 }),
             );
         });
 
         it('throws UnauthenticatedError when the back answers 401', async () => {
-            backendResponds(401, { statusCode: 401, message: 'Missing, expired or signed-out session' });
+            backendResponds(401, {
+                statusCode: 401,
+                message: 'Missing, expired or signed-out session',
+            });
 
-            await expect(authenticationService.getCurrentUser('session-123')).rejects.toBeInstanceOf(
-                UnauthenticatedError,
-            );
+            await expect(
+                authenticationService.getCurrentUser('session-123'),
+            ).rejects.toBeInstanceOf(UnauthenticatedError);
         });
     });
 
@@ -151,22 +226,29 @@ describe('AuthenticationService', () => {
         it('DELETEs /sessions/current with the Sesión as a Bearer token', async () => {
             const fetchMock = backendResponds(204);
 
-            await expect(authenticationService.invalidateSession('session-123')).resolves.toBeUndefined();
+            await expect(
+                authenticationService.invalidateSession('session-123'),
+            ).resolves.toBeUndefined();
             expect(fetchMock).toHaveBeenCalledWith(
                 'http://back.test/sessions/current',
                 expect.objectContaining({
                     method: 'DELETE',
-                    headers: expect.objectContaining({ Authorization: 'Bearer session-123' }),
+                    headers: expect.objectContaining({
+                        Authorization: 'Bearer session-123',
+                    }),
                 }),
             );
         });
 
         it('throws UnauthenticatedError when the back answers 401', async () => {
-            backendResponds(401, { statusCode: 401, message: 'Missing, expired or signed-out session' });
+            backendResponds(401, {
+                statusCode: 401,
+                message: 'Missing, expired or signed-out session',
+            });
 
-            await expect(authenticationService.invalidateSession('session-123')).rejects.toBeInstanceOf(
-                UnauthenticatedError,
-            );
+            await expect(
+                authenticationService.invalidateSession('session-123'),
+            ).rejects.toBeInstanceOf(UnauthenticatedError);
         });
     });
 });

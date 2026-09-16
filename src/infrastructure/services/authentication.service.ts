@@ -9,16 +9,26 @@ import {
 } from '@/src/entities/errors/auth';
 import { BackendValidationError } from '@/src/entities/errors/common';
 import type { Session } from '@/src/entities/models/session';
-import { userSchema, type CreateUser, type User } from '@/src/entities/models/user';
+import {
+    userSchema,
+    type CreateUser,
+    type User,
+} from '@/src/entities/models/user';
 
 const sessionResponseSchema = z
     .object({ sessionId: z.string(), expiresAt: z.coerce.date() })
-    .transform(({ sessionId, expiresAt }): Session => ({ id: sessionId, expiresAt }));
+    .transform(
+        ({ sessionId, expiresAt }): Session => ({ id: sessionId, expiresAt }),
+    );
 
 type ErrorsByStatus = Record<number, (options: ErrorOptions) => Error>;
 
 const invalidSessionErrors: ErrorsByStatus = {
-    401: (options) => new UnauthenticatedError('Missing, expired or signed-out session', options),
+    401: (options) =>
+        new UnauthenticatedError(
+            'Missing, expired or signed-out session',
+            options,
+        ),
 };
 
 export class AuthenticationService implements IAuthenticationService {
@@ -27,25 +37,45 @@ export class AuthenticationService implements IAuthenticationService {
     async signUp(input: CreateUser): Promise<void> {
         await this.request('POST', '/users', {
             body: input,
-            errors: { 409: (options) => new EmailTakenError('Email is already registered', options) },
+            errors: {
+                409: (options) =>
+                    new EmailTakenError('Email is already registered', options),
+            },
         });
     }
 
-    async signIn(credentials: { email: string; password: string }): Promise<Session> {
+    async signIn(credentials: {
+        email: string;
+        password: string;
+    }): Promise<Session> {
         const response = await this.request('POST', '/sessions', {
             body: credentials,
-            errors: { 401: (options) => new AuthenticationError('Invalid email or password', options) },
+            errors: {
+                401: (options) =>
+                    new AuthenticationError(
+                        'Invalid email or password',
+                        options,
+                    ),
+            },
         });
         return sessionResponseSchema.parse(await response.json());
     }
 
     // 410 = expired, 400 = invalid, already used or tampered with. If the back's codes change, only this map moves.
     async verifyEmail(token: string): Promise<Session> {
-        const response = await this.request('POST', '/sessions/verifications', {
+        const response = await this.request('POST', '/users/verification', {
             body: { token },
             errors: {
-                410: (options) => new VerificationLinkExpiredError('Verification link expired', options),
-                400: (options) => new VerificationLinkInvalidError('Verification link is not usable', options),
+                410: (options) =>
+                    new VerificationLinkExpiredError(
+                        'Verification link expired',
+                        options,
+                    ),
+                400: (options) =>
+                    new VerificationLinkInvalidError(
+                        'Verification link is not usable',
+                        options,
+                    ),
             },
         });
         return sessionResponseSchema.parse(await response.json());
@@ -53,22 +83,34 @@ export class AuthenticationService implements IAuthenticationService {
 
     // 202 always, exists or not, so the response never leaks who's registered.
     async resendVerification(email: string): Promise<void> {
-        await this.request('POST', '/users/verifications', { body: { email } });
+        await this.request('POST', '/users/verification/resend', {
+            body: { email },
+        });
     }
 
     async getCurrentUser(sessionId: string): Promise<User> {
-        const response = await this.request('GET', '/users/me', { sessionId, errors: invalidSessionErrors });
+        const response = await this.request('GET', '/users/me', {
+            sessionId,
+            errors: invalidSessionErrors,
+        });
         return userSchema.parse(await response.json());
     }
 
     async invalidateSession(sessionId: string): Promise<void> {
-        await this.request('DELETE', '/sessions/current', { sessionId, errors: invalidSessionErrors });
+        await this.request('DELETE', '/sessions/current', {
+            sessionId,
+            errors: invalidSessionErrors,
+        });
     }
 
     private async request(
         method: 'GET' | 'POST' | 'DELETE',
         path: string,
-        { body, sessionId, errors = {} }: { body?: unknown; sessionId?: string; errors?: ErrorsByStatus },
+        {
+            body,
+            sessionId,
+            errors = {},
+        }: { body?: unknown; sessionId?: string; errors?: ErrorsByStatus },
     ): Promise<Response> {
         const response = await fetch(`${this.apiBaseUrl}${path}`, {
             method,
@@ -84,7 +126,14 @@ export class AuthenticationService implements IAuthenticationService {
         const options = { cause: await response.json().catch(() => undefined) };
         const toError = errors[response.status];
         if (toError) throw toError(options);
-        if (response.status === 400) throw new BackendValidationError('Back rejected the input', options);
-        throw new Error(`Back answered ${response.status} to ${method} ${path}`, options);
+        if (response.status === 400)
+            throw new BackendValidationError(
+                'Back rejected the input',
+                options,
+            );
+        throw new Error(
+            `Back answered ${response.status} to ${method} ${path}`,
+            options,
+        );
     }
 }
