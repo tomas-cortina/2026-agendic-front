@@ -4,22 +4,18 @@ import { signUpController } from '@/src/interface-adapters/controllers/auth/sign
 import { instrumentation } from '@/tests/unit/stubs';
 
 const valid = { email: 'ana@negocio.com', name: 'Ana Pérez', password: 'correct horse battery' };
-const session = { id: 'session-123', expiresAt: new Date('2026-10-14T00:00:00.000Z') };
 
 // No "unauthenticated" case: sign-up happens before any session exists.
 describe('signUpController', () => {
-    it('returns the new session', async () => {
-        const signUpUseCase = jest.fn().mockResolvedValue(session);
+    it('registers the Usuario without returning anything', async () => {
+        const signUpUseCase = jest.fn().mockResolvedValue(undefined);
 
-        await expect(signUpController(instrumentation, signUpUseCase)(valid)).resolves.toEqual({
-            sessionId: 'session-123',
-            expiresAt: session.expiresAt,
-        });
+        await expect(signUpController(instrumentation, signUpUseCase)(valid)).resolves.toBeUndefined();
         expect(signUpUseCase).toHaveBeenCalledWith(valid);
     });
 
     it('lowercases the email before signing up', async () => {
-        const signUpUseCase = jest.fn().mockResolvedValue(session);
+        const signUpUseCase = jest.fn().mockResolvedValue(undefined);
 
         await signUpController(instrumentation, signUpUseCase)({ ...valid, email: 'Ana@Negocio.com' });
 

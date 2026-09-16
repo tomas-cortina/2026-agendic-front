@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/app/_components/ui/button';
 import { Input } from '@/app/_components/ui/input';
@@ -15,10 +15,14 @@ const MIN_PASSWORD_LENGTH = 12;
 
 const labelClass = 'text-[13px] font-bold text-foreground mb-2';
 
-export function DetailsStep({ email }: { email: string }) {
+export function DetailsStep({ email, onSent }: { email: string; onSent: () => void }) {
     const [state, formAction, pending] = useActionState(signUp, initialState);
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+
+    useEffect(() => {
+        if (state.sent) onSent();
+    }, [state.sent, onSent]);
 
     // ponytail: length-only strength heuristic, swap in zxcvbn if real scoring matters
     const strength = Math.min(password.length / 16, 1);

@@ -51,6 +51,10 @@ _Avoid_: provider, OAuth
 Cómo se registra un Usuario, derivado de su email: con un Proveedor de identidad o con contraseña.
 _Avoid_: sign-up method, tipo de cuenta
 
+**Registro pendiente**:
+Alta de un Usuario que todavía no verificó su email. No tiene Sesión.
+_Avoid_: cuenta sin verificar, pending user
+
 **Sesión**:
 Período durante el cual un Usuario queda identificado, desde que se registra o inicia sesión hasta que cierra sesión o la sesión vence.
 _Avoid_: login (como sustantivo)

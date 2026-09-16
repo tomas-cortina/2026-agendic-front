@@ -1,4 +1,3 @@
-import type { Session } from '@/src/entities/models/session';
 import type { CreateUser } from '@/src/entities/models/user';
 import type { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
 import type { IAuthenticationService } from '@/src/application/services/authentication.service.interface';
@@ -6,7 +5,7 @@ import type { IAuthenticationService } from '@/src/application/services/authenti
 export type ISignUpUseCase = ReturnType<typeof signUpUseCase>;
 export const signUpUseCase =
     (instrumentationService: IInstrumentationService, authenticationService: IAuthenticationService) =>
-    (input: CreateUser): Promise<Session> =>
+    (input: CreateUser): Promise<void> =>
         instrumentationService.startSpan({ name: 'signUp Use Case', op: 'function' }, () =>
             authenticationService.signUp(input),
         );

@@ -3,13 +3,12 @@ import { EmailTakenError } from '@/src/entities/errors/auth';
 import { authWith, instrumentation } from '@/tests/unit/stubs';
 
 const newUsuario = { email: 'ana@negocio.com', name: 'Ana Pérez', password: 'correct horse battery' };
-const session = { id: 'session-123', expiresAt: new Date('2026-10-14T00:00:00.000Z') };
 
 describe('signUpUseCase', () => {
-    it('registers the Usuario and returns the Sesión the back issued', async () => {
-        const signUp = jest.fn().mockResolvedValue(session);
+    it('registers the Usuario without returning a Sesión', async () => {
+        const signUp = jest.fn().mockResolvedValue(undefined);
 
-        await expect(signUpUseCase(instrumentation, authWith({ signUp }))(newUsuario)).resolves.toEqual(session);
+        await expect(signUpUseCase(instrumentation, authWith({ signUp }))(newUsuario)).resolves.toBeUndefined();
         expect(signUp).toHaveBeenCalledWith(newUsuario);
     });
 

@@ -23,13 +23,10 @@ afterEach(() => jest.restoreAllMocks());
 
 describe('AuthenticationService', () => {
     describe('signUp', () => {
-        it('POSTs the new Usuario to /users and returns the Sesión the back issued', async () => {
-            const fetchMock = backendResponds(201, issuedSession);
+        it('POSTs the new Usuario to /users without parsing a response', async () => {
+            const fetchMock = backendResponds(201);
 
-            await expect(authenticationService.signUp(newUsuario)).resolves.toEqual({
-                id: 'session-123',
-                expiresAt: new Date('2026-10-14T00:00:00.000Z'),
-            });
+            await expect(authenticationService.signUp(newUsuario)).resolves.toBeUndefined();
             expect(fetchMock).toHaveBeenCalledWith(
                 'http://back.test/users',
                 expect.objectContaining({ method: 'POST', body: JSON.stringify(newUsuario) }),

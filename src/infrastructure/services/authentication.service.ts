@@ -24,12 +24,11 @@ const invalidSessionErrors: ErrorsByStatus = {
 export class AuthenticationService implements IAuthenticationService {
     constructor(private readonly apiBaseUrl: string) {}
 
-    async signUp(input: CreateUser): Promise<Session> {
-        const response = await this.request('POST', '/users', {
+    async signUp(input: CreateUser): Promise<void> {
+        await this.request('POST', '/users', {
             body: input,
             errors: { 409: (options) => new EmailTakenError('Email is already registered', options) },
         });
-        return sessionResponseSchema.parse(await response.json());
     }
 
     async signIn(credentials: { email: string; password: string }): Promise<Session> {

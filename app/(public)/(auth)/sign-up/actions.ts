@@ -1,11 +1,9 @@
 'use server';
 
-import { redirect } from 'next/navigation';
 import { getInjection } from '@/di/container';
 import { EmailTakenError } from '@/src/entities/errors/auth';
 import { BackendValidationError, InputParseError } from '@/src/entities/errors/common';
 import type { SignUpMethod } from '@/src/entities/models/sign-up-method';
-import { setSessionCookie } from '../session-cookie';
 
 export type ResolveSignUpMethodResult =
     | { method: SignUpMethod }
@@ -29,6 +27,7 @@ export async function resolveSignUpMethod(
 
 export type SignUpState = {
     error?: string;
+    sent?: boolean;
 };
 
 export async function signUp(
@@ -37,12 +36,11 @@ export async function signUp(
 ): Promise<SignUpState> {
     try {
         const controller = getInjection('ISignUpController');
-        const session = await controller({
+        await controller({
             email: formData.get('email')?.toString(),
             name: formData.get('name')?.toString(),
             password: formData.get('password')?.toString(),
         });
-        await setSessionCookie(session);
     } catch (error) {
         if (error instanceof BackendValidationError) {
             // The back rejected what the front's rules let through: they've drifted, so report it too.
@@ -57,5 +55,5 @@ export async function signUp(
         getInjection('ICrashReporterService').report(error);
         return { error: 'Algo salió mal. Probá de nuevo.' };
     }
-    redirect('/');
+    return { sent: true };
 }
