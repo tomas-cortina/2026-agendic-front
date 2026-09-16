@@ -5,6 +5,8 @@ import type { CreateUser, User } from '@/src/entities/models/user';
 export interface IAuthenticationService {
     signUp(input: CreateUser): Promise<Session>;
     signIn(credentials: { email: string; password: string }): Promise<Session>;
+    // Redeems a Link de verificación: the token buys a Sesión, so the Usuario lands signed in.
+    verifyEmail(token: string): Promise<Session>;
     getCurrentUser(sessionId: string): Promise<User>;
     invalidateSession(sessionId: string): Promise<void>;
 }

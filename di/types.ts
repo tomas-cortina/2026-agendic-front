@@ -5,11 +5,13 @@ import type { IResolveSignUpMethodUseCase } from '@/src/application/use-cases/au
 import type { ISignInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
 import type { ISignOutUseCase } from '@/src/application/use-cases/auth/sign-out.use-case';
 import type { ISignUpUseCase } from '@/src/application/use-cases/auth/sign-up.use-case';
+import type { IVerifyEmailUseCase } from '@/src/application/use-cases/auth/verify-email.use-case';
 import type { IGetCurrentUserController } from '@/src/interface-adapters/controllers/auth/get-current-user.controller';
 import type { IResolveSignUpMethodController } from '@/src/interface-adapters/controllers/auth/resolve-sign-up-method.controller';
 import type { ISignInController } from '@/src/interface-adapters/controllers/auth/sign-in.controller';
 import type { ISignOutController } from '@/src/interface-adapters/controllers/auth/sign-out.controller';
 import type { ISignUpController } from '@/src/interface-adapters/controllers/auth/sign-up.controller';
+import type { IVerifyEmailController } from '@/src/interface-adapters/controllers/auth/verify-email.controller';
 
 export const DI_SYMBOLS = {
     // Services
@@ -22,6 +24,7 @@ export const DI_SYMBOLS = {
     ISignUpUseCase: Symbol.for('ISignUpUseCase'),
     ISignInUseCase: Symbol.for('ISignInUseCase'),
     ISignOutUseCase: Symbol.for('ISignOutUseCase'),
+    IVerifyEmailUseCase: Symbol.for('IVerifyEmailUseCase'),
 
     // Controllers
     IResolveSignUpMethodController: Symbol.for('IResolveSignUpMethodController'),
@@ -29,6 +32,7 @@ export const DI_SYMBOLS = {
     ISignInController: Symbol.for('ISignInController'),
     IGetCurrentUserController: Symbol.for('IGetCurrentUserController'),
     ISignOutController: Symbol.for('ISignOutController'),
+    IVerifyEmailController: Symbol.for('IVerifyEmailController'),
 };
 
 export interface DI_RETURN_TYPES {
@@ -42,6 +46,7 @@ export interface DI_RETURN_TYPES {
     ISignUpUseCase: ISignUpUseCase;
     ISignInUseCase: ISignInUseCase;
     ISignOutUseCase: ISignOutUseCase;
+    IVerifyEmailUseCase: IVerifyEmailUseCase;
 
     // Controllers
     IResolveSignUpMethodController: IResolveSignUpMethodController;
@@ -49,4 +54,5 @@ export interface DI_RETURN_TYPES {
     ISignInController: ISignInController;
     IGetCurrentUserController: IGetCurrentUserController;
     ISignOutController: ISignOutController;
+    IVerifyEmailController: IVerifyEmailController;
 }

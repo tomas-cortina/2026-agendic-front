@@ -1,4 +1,10 @@
-import { AuthenticationError, EmailTakenError, UnauthenticatedError } from '@/src/entities/errors/auth';
+import {
+    AuthenticationError,
+    EmailTakenError,
+    UnauthenticatedError,
+    VerificationLinkExpiredError,
+    VerificationLinkInvalidError,
+} from '@/src/entities/errors/auth';
 import { BackendValidationError } from '@/src/entities/errors/common';
 import { AuthenticationService } from '@/src/infrastructure/services/authentication.service';
 
@@ -63,6 +69,48 @@ describe('AuthenticationService', () => {
             backendResponds(401, { statusCode: 401, message: 'Invalid email or password' });
 
             await expect(authenticationService.signIn(credentials)).rejects.toBeInstanceOf(AuthenticationError);
+        });
+    });
+
+    describe('verifyEmail', () => {
+        const token = 'verification-token-abc';
+
+        it('POSTs the token to /sessions/verifications and returns the Sesión the back issued', async () => {
+            const fetchMock = backendResponds(201, issuedSession);
+
+            await expect(authenticationService.verifyEmail(token)).resolves.toEqual({
+                id: 'session-123',
+                expiresAt: new Date('2026-10-14T00:00:00.000Z'),
+            });
+            expect(fetchMock).toHaveBeenCalledWith(
+                'http://back.test/sessions/verifications',
+                expect.objectContaining({ method: 'POST', body: JSON.stringify({ token }) }),
+            );
+        });
+
+        it('throws VerificationLinkExpiredError when the back answers 410', async () => {
+            backendResponds(410, { statusCode: 410, message: 'Verification link expired' });
+
+            await expect(authenticationService.verifyEmail(token)).rejects.toBeInstanceOf(
+                VerificationLinkExpiredError,
+            );
+        });
+
+        // Invalid, already used and tampered-with all arrive as 400: the Usuario reads the same message.
+        it('throws VerificationLinkInvalidError when the back answers 400', async () => {
+            backendResponds(400, { statusCode: 400, message: 'Invalid verification token' });
+
+            await expect(authenticationService.verifyEmail(token)).rejects.toBeInstanceOf(
+                VerificationLinkInvalidError,
+            );
+        });
+
+        it('attaches the answer from the back as the cause', async () => {
+            backendResponds(410, { statusCode: 410, message: 'Verification link expired' });
+
+            await expect(authenticationService.verifyEmail(token)).rejects.toMatchObject({
+                cause: { statusCode: 410, message: 'Verification link expired' },
+            });
         });
     });
 

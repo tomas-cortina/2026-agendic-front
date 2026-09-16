@@ -67,6 +67,10 @@ _Avoid_: logout, log-out, desloguearse, salir
 Abrir el link enviado por email para probar que la dirección es real.
 _Avoid_: confirmar email
 
+**Link de verificación**:
+Link de un solo uso que Agendic manda por email. Al abrirlo, el Usuario queda con una Sesión abierta. Vence, y funciona en cualquier dispositivo, no solo en el que se registró.
+_Avoid_: link de confirmación, magic link
+
 ### Agenda
 
 **Servicio**:

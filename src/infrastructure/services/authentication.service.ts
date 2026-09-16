@@ -1,6 +1,12 @@
 import { z } from 'zod';
 import type { IAuthenticationService } from '@/src/application/services/authentication.service.interface';
-import { AuthenticationError, EmailTakenError, UnauthenticatedError } from '@/src/entities/errors/auth';
+import {
+    AuthenticationError,
+    EmailTakenError,
+    UnauthenticatedError,
+    VerificationLinkExpiredError,
+    VerificationLinkInvalidError,
+} from '@/src/entities/errors/auth';
 import { BackendValidationError } from '@/src/entities/errors/common';
 import type { Session } from '@/src/entities/models/session';
 import { userSchema, type CreateUser, type User } from '@/src/entities/models/user';
@@ -30,6 +36,18 @@ export class AuthenticationService implements IAuthenticationService {
         const response = await this.request('POST', '/sessions', {
             body: credentials,
             errors: { 401: (options) => new AuthenticationError('Invalid email or password', options) },
+        });
+        return sessionResponseSchema.parse(await response.json());
+    }
+
+    // 410 = expired, 400 = invalid, already used or tampered with. If the back's codes change, only this map moves.
+    async verifyEmail(token: string): Promise<Session> {
+        const response = await this.request('POST', '/sessions/verifications', {
+            body: { token },
+            errors: {
+                410: (options) => new VerificationLinkExpiredError('Verification link expired', options),
+                400: (options) => new VerificationLinkInvalidError('Verification link is not usable', options),
+            },
         });
         return sessionResponseSchema.parse(await response.json());
     }

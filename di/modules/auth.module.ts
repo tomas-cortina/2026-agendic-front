@@ -4,12 +4,14 @@ import { resolveSignUpMethodUseCase } from '@/src/application/use-cases/auth/res
 import { signInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
 import { signOutUseCase } from '@/src/application/use-cases/auth/sign-out.use-case';
 import { signUpUseCase } from '@/src/application/use-cases/auth/sign-up.use-case';
+import { verifyEmailUseCase } from '@/src/application/use-cases/auth/verify-email.use-case';
 import { AuthenticationService } from '@/src/infrastructure/services/authentication.service';
 import { getCurrentUserController } from '@/src/interface-adapters/controllers/auth/get-current-user.controller';
 import { resolveSignUpMethodController } from '@/src/interface-adapters/controllers/auth/resolve-sign-up-method.controller';
 import { signInController } from '@/src/interface-adapters/controllers/auth/sign-in.controller';
 import { signOutController } from '@/src/interface-adapters/controllers/auth/sign-out.controller';
 import { signUpController } from '@/src/interface-adapters/controllers/auth/sign-up.controller';
+import { verifyEmailController } from '@/src/interface-adapters/controllers/auth/verify-email.controller';
 
 export function createAuthModule() {
     const authModule = createModule();
@@ -38,6 +40,13 @@ export function createAuthModule() {
         .toHigherOrderFunction(signOutUseCase, [DI_SYMBOLS.IInstrumentationService, DI_SYMBOLS.IAuthenticationService]);
 
     authModule
+        .bind(DI_SYMBOLS.IVerifyEmailUseCase)
+        .toHigherOrderFunction(verifyEmailUseCase, [
+            DI_SYMBOLS.IInstrumentationService,
+            DI_SYMBOLS.IAuthenticationService,
+        ]);
+
+    authModule
         .bind(DI_SYMBOLS.IResolveSignUpMethodController)
         .toHigherOrderFunction(resolveSignUpMethodController, [
             DI_SYMBOLS.IInstrumentationService,
@@ -62,6 +71,13 @@ export function createAuthModule() {
     authModule
         .bind(DI_SYMBOLS.ISignOutController)
         .toHigherOrderFunction(signOutController, [DI_SYMBOLS.IInstrumentationService, DI_SYMBOLS.ISignOutUseCase]);
+
+    authModule
+        .bind(DI_SYMBOLS.IVerifyEmailController)
+        .toHigherOrderFunction(verifyEmailController, [
+            DI_SYMBOLS.IInstrumentationService,
+            DI_SYMBOLS.IVerifyEmailUseCase,
+        ]);
 
     return authModule;
 }

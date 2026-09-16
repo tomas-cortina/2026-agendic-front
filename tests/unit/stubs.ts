@@ -9,6 +9,7 @@ const notStubbed = (name: string) => () => Promise.reject(new Error(`${name} not
 export const authWith = (stubs: Partial<IAuthenticationService>): IAuthenticationService => ({
     signUp: notStubbed('signUp'),
     signIn: notStubbed('signIn'),
+    verifyEmail: notStubbed('verifyEmail'),
     getCurrentUser: notStubbed('getCurrentUser'),
     invalidateSession: notStubbed('invalidateSession'),
     ...stubs,
