@@ -7,6 +7,7 @@ import { Input } from '@/app/_components/ui/input';
 import { Label } from '@/app/_components/ui/label';
 import { signUp, type SignUpState } from '../actions';
 import { FormError } from './FormError';
+import { ResendVerificationButton } from './ResendVerificationButton';
 import { StepShell } from './StepShell';
 
 const initialState: SignUpState = {};
@@ -98,6 +99,11 @@ export function DetailsStep({ email, onSent }: { email: string; onSent: () => vo
                 </div>
 
                 <FormError message={state.error} />
+                {state.emailTaken && (
+                    <div className="-mt-2.5 mb-4.5">
+                        <ResendVerificationButton email={state.emailTaken} />
+                    </div>
+                )}
 
                 <div className="flex justify-end">
                     <Button

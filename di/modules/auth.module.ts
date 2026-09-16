@@ -1,5 +1,6 @@
 import { createModule } from '@evyweb/ioctopus';
 import { DI_SYMBOLS } from '@/di/types';
+import { resendVerificationUseCase } from '@/src/application/use-cases/auth/resend-verification.use-case';
 import { resolveSignUpMethodUseCase } from '@/src/application/use-cases/auth/resolve-sign-up-method.use-case';
 import { signInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
 import { signOutUseCase } from '@/src/application/use-cases/auth/sign-out.use-case';
@@ -7,6 +8,7 @@ import { signUpUseCase } from '@/src/application/use-cases/auth/sign-up.use-case
 import { verifyEmailUseCase } from '@/src/application/use-cases/auth/verify-email.use-case';
 import { AuthenticationService } from '@/src/infrastructure/services/authentication.service';
 import { getCurrentUserController } from '@/src/interface-adapters/controllers/auth/get-current-user.controller';
+import { resendVerificationController } from '@/src/interface-adapters/controllers/auth/resend-verification.controller';
 import { resolveSignUpMethodController } from '@/src/interface-adapters/controllers/auth/resolve-sign-up-method.controller';
 import { signInController } from '@/src/interface-adapters/controllers/auth/sign-in.controller';
 import { signOutController } from '@/src/interface-adapters/controllers/auth/sign-out.controller';
@@ -26,6 +28,13 @@ export function createAuthModule() {
     authModule
         .bind(DI_SYMBOLS.IResolveSignUpMethodUseCase)
         .toHigherOrderFunction(resolveSignUpMethodUseCase, [DI_SYMBOLS.IInstrumentationService]);
+
+    authModule
+        .bind(DI_SYMBOLS.IResendVerificationUseCase)
+        .toHigherOrderFunction(resendVerificationUseCase, [
+            DI_SYMBOLS.IInstrumentationService,
+            DI_SYMBOLS.IAuthenticationService,
+        ]);
 
     authModule
         .bind(DI_SYMBOLS.ISignUpUseCase)
@@ -51,6 +60,13 @@ export function createAuthModule() {
         .toHigherOrderFunction(resolveSignUpMethodController, [
             DI_SYMBOLS.IInstrumentationService,
             DI_SYMBOLS.IResolveSignUpMethodUseCase,
+        ]);
+
+    authModule
+        .bind(DI_SYMBOLS.IResendVerificationController)
+        .toHigherOrderFunction(resendVerificationController, [
+            DI_SYMBOLS.IInstrumentationService,
+            DI_SYMBOLS.IResendVerificationUseCase,
         ]);
 
     authModule

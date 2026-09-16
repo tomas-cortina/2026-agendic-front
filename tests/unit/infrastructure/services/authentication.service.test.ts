@@ -111,6 +111,18 @@ describe('AuthenticationService', () => {
         });
     });
 
+    describe('resendVerification', () => {
+        it('POSTs the email to /users/verifications and treats 202 as success', async () => {
+            const fetchMock = backendResponds(202);
+
+            await expect(authenticationService.resendVerification(newUsuario.email)).resolves.toBeUndefined();
+            expect(fetchMock).toHaveBeenCalledWith(
+                'http://back.test/users/verifications',
+                expect.objectContaining({ method: 'POST', body: JSON.stringify({ email: newUsuario.email }) }),
+            );
+        });
+    });
+
     describe('getCurrentUser', () => {
         it('GETs /users/me with the Sesión as a Bearer token and returns the Usuario', async () => {
             const usuario = { id: 7, name: 'Ana Pérez', email: 'ana@negocio.com', role: 'USER' };

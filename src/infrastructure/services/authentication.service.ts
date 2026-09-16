@@ -51,6 +51,11 @@ export class AuthenticationService implements IAuthenticationService {
         return sessionResponseSchema.parse(await response.json());
     }
 
+    // 202 always, exists or not, so the response never leaks who's registered.
+    async resendVerification(email: string): Promise<void> {
+        await this.request('POST', '/users/verifications', { body: { email } });
+    }
+
     async getCurrentUser(sessionId: string): Promise<User> {
         const response = await this.request('GET', '/users/me', { sessionId, errors: invalidSessionErrors });
         return userSchema.parse(await response.json());

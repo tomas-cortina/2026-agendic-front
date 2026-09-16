@@ -8,6 +8,8 @@ export interface IAuthenticationService {
     signIn(credentials: { email: string; password: string }): Promise<Session>;
     // Redeems a Link de verificación: the token buys a Sesión, so the Usuario lands signed in.
     verifyEmail(token: string): Promise<Session>;
+    // Resends the Link de verificación; answers the same whether or not the email is registered.
+    resendVerification(email: string): Promise<void>;
     getCurrentUser(sessionId: string): Promise<User>;
     invalidateSession(sessionId: string): Promise<void>;
 }

@@ -10,6 +10,7 @@ export const authWith = (stubs: Partial<IAuthenticationService>): IAuthenticatio
     signUp: notStubbed('signUp'),
     signIn: notStubbed('signIn'),
     verifyEmail: notStubbed('verifyEmail'),
+    resendVerification: notStubbed('resendVerification'),
     getCurrentUser: notStubbed('getCurrentUser'),
     invalidateSession: notStubbed('invalidateSession'),
     ...stubs,
