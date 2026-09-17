@@ -13,6 +13,7 @@ import {
     Settings,
     ExternalLink,
     Link as LinkIcon,
+    LogOut,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarBadge } from '@/app/_components/ui/avatar';
 import { Badge } from '@/app/_components/ui/badge';
@@ -46,12 +47,30 @@ export function Sidebar({ user, navItems }: { user: CurrentBusinessUser; navItem
     return (
         <aside className="flex w-[248px] shrink-0 flex-col gap-5 border-r border-border bg-white p-3.5 pt-4.5">
             <div className="flex items-center gap-2.5 px-1">
-                <Avatar>
-                    <AvatarFallback className="bg-secondary text-[12px] font-extrabold text-primary">
-                        {user.initials}
-                    </AvatarFallback>
-                    <AvatarBadge className="bg-[#16a34a] ring-white" aria-label="Conectado" />
-                </Avatar>
+                <DropdownMenu>
+                    <DropdownMenuTrigger className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                        <Avatar>
+                            <AvatarFallback className="bg-secondary text-[12px] font-extrabold text-primary">
+                                {user.initials}
+                            </AvatarFallback>
+                            <AvatarBadge className="bg-[#16a34a] ring-white" aria-label="Conectado" />
+                        </Avatar>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent side="bottom" align="start">
+                        <DropdownMenuItem disabled className="opacity-50">
+                            <Settings className="size-[15px]" />
+                            Configuración
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <form action={signOut} className="w-full">
+                                <button type="submit" className="flex w-full items-center gap-2 text-left">
+                                    <LogOut className="size-[15px]" />
+                                    Cerrar sesión
+                                </button>
+                            </form>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
                 <div className="flex min-w-0 flex-col leading-[1.15]">
                     <span className="truncate text-[14px] font-extrabold tracking-[-0.025em]">{user.name}</span>
                     <span className="text-[11px] font-semibold text-muted-foreground">{user.role}</span>
