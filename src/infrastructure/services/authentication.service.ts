@@ -4,8 +4,8 @@ import {
     AuthenticationError,
     EmailTakenError,
     UnauthenticatedError,
-    VerificationLinkExpiredError,
-    VerificationLinkInvalidError,
+    VerificationCodeExpiredError,
+    VerificationCodeInvalidError,
 } from '@/src/entities/errors/auth';
 import { BackendValidationError } from '@/src/entities/errors/common';
 import type { Session } from '@/src/entities/models/session';
@@ -62,18 +62,18 @@ export class AuthenticationService implements IAuthenticationService {
     }
 
     // 410 = expired, 400 = invalid, already used or tampered with. If the back's codes change, only this map moves.
-    async verifyEmail(token: string): Promise<Session> {
+    async verifyEmail(email: string, code: string): Promise<Session> {
         const response = await this.request('POST', '/users/verification', {
-            body: { token },
+            body: { email, code },
             errors: {
                 410: (options) =>
-                    new VerificationLinkExpiredError(
-                        'Verification link expired',
+                    new VerificationCodeExpiredError(
+                        'Verification code expired',
                         options,
                     ),
                 400: (options) =>
-                    new VerificationLinkInvalidError(
-                        'Verification link is not usable',
+                    new VerificationCodeInvalidError(
+                        'Verification code is not usable',
                         options,
                     ),
             },

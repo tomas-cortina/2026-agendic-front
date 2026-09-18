@@ -16,14 +16,14 @@ export class UnauthenticatedError extends Error {
     }
 }
 
-export class VerificationLinkExpiredError extends Error {
+export class VerificationCodeExpiredError extends Error {
     constructor(message: string, options?: ErrorOptions) {
         super(message, options);
     }
 }
 
 // Invalid, already used and tampered-with share this one: the Usuario reads the same message for all three.
-export class VerificationLinkInvalidError extends Error {
+export class VerificationCodeInvalidError extends Error {
     constructor(message: string, options?: ErrorOptions) {
         super(message, options);
     }

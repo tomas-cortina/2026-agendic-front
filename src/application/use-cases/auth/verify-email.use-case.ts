@@ -5,7 +5,7 @@ import type { IAuthenticationService } from '@/src/application/services/authenti
 export type IVerifyEmailUseCase = ReturnType<typeof verifyEmailUseCase>;
 export const verifyEmailUseCase =
     (instrumentationService: IInstrumentationService, authenticationService: IAuthenticationService) =>
-    (input: { token: string }): Promise<Session> =>
+    (input: { email: string; code: string }): Promise<Session> =>
         instrumentationService.startSpan({ name: 'verifyEmail Use Case', op: 'function' }, () =>
-            authenticationService.verifyEmail(input.token),
+            authenticationService.verifyEmail(input.email, input.code),
         );

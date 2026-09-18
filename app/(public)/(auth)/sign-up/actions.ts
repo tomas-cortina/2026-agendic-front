@@ -1,9 +1,11 @@
 'use server';
 
+import { redirect } from 'next/navigation';
 import { getInjection } from '@/di/container';
-import { EmailTakenError } from '@/src/entities/errors/auth';
+import { EmailTakenError, VerificationCodeExpiredError, VerificationCodeInvalidError } from '@/src/entities/errors/auth';
 import { BackendValidationError, InputParseError } from '@/src/entities/errors/common';
 import type { SignUpMethod } from '@/src/entities/models/sign-up-method';
+import { setSessionCookie } from '../session-cookie';
 
 export type ResolveSignUpMethodResult =
     | { method: SignUpMethod }
@@ -76,4 +78,33 @@ export async function signUp(
         return { error: 'Algo salió mal. Probá de nuevo.' };
     }
     return { sent: true };
+}
+
+export type VerifyEmailState = { error?: string };
+
+export async function verifyEmail(
+    _prevState: VerifyEmailState,
+    formData: FormData,
+): Promise<VerifyEmailState> {
+    try {
+        const controller = getInjection('IVerifyEmailController');
+        const session = await controller({
+            email: formData.get('email')?.toString(),
+            code: formData.get('code')?.toString(),
+        });
+        await setSessionCookie(session);
+    } catch (error) {
+        if (error instanceof InputParseError) {
+            return { error: 'Ingresá el código de 6 caracteres que te mandamos.' };
+        }
+        if (error instanceof VerificationCodeExpiredError) {
+            return { error: 'El código venció. Pedí uno nuevo.' };
+        }
+        if (error instanceof VerificationCodeInvalidError) {
+            return { error: 'El código no es correcto. Revisalo y probá de nuevo.' };
+        }
+        getInjection('ICrashReporterService').report(error);
+        return { error: 'Algo salió mal. Probá de nuevo.' };
+    }
+    redirect('/turnos');
 }

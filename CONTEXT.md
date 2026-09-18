@@ -68,12 +68,12 @@ Acción del Usuario de terminar su Sesión.
 _Avoid_: logout, log-out, desloguearse, salir
 
 **Verificar email**:
-Abrir el link enviado por email para probar que la dirección es real.
+Ingresar el Código de verificación recibido por email para probar que la dirección es real.
 _Avoid_: confirmar email
 
-**Link de verificación**:
-Link de un solo uso que Agendic manda por email. Al abrirlo, el Usuario queda con una Sesión abierta. Vence, y funciona en cualquier dispositivo, no solo en el que se registró.
-_Avoid_: link de confirmación, magic link
+**Código de verificación**:
+Código alfanumérico de 6 caracteres, de un solo uso, que Agendic manda por email. Al ingresarlo, el Usuario queda con una Sesión abierta. Vence, y se puede tipear desde cualquier dispositivo, no solo el que se registró.
+_Avoid_: código de confirmación, OTP, link de verificación
 
 ### Agenda
 

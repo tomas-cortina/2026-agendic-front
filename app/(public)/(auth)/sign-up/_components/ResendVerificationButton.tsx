@@ -37,7 +37,7 @@ export function ResendVerificationButton({ email }: { email: string }) {
                 disabled={disabled}
                 className="text-[13px] font-semibold h-auto px-4 py-2 rounded-lg"
             >
-                {secondsLeft > 0 ? `Reenviar en ${secondsLeft}s` : 'Reenviar el link de verificación'}
+                {secondsLeft > 0 ? `Reenviar en ${secondsLeft}s` : 'Reenviar el código'}
             </Button>
             {error && <p className="text-[13px] text-destructive mt-2">{error}</p>}
         </div>

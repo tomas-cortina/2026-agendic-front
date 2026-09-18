@@ -6,9 +6,9 @@ export interface IAuthenticationService {
     // Opens a Registro pendiente and sends the Link de verificación; no Sesión until the Usuario verifies.
     signUp(input: CreateUser): Promise<void>;
     signIn(credentials: { email: string; password: string }): Promise<Session>;
-    // Redeems a Link de verificación: the token buys a Sesión, so the Usuario lands signed in.
-    verifyEmail(token: string): Promise<Session>;
-    // Resends the Link de verificación; answers the same whether or not the email is registered.
+    // Redeems a Código de verificación: the code buys a Sesión, so the Usuario lands signed in.
+    verifyEmail(email: string, code: string): Promise<Session>;
+    // Resends the Código de verificación; answers the same whether or not the email is registered.
     resendVerification(email: string): Promise<void>;
     getCurrentUser(sessionId: string): Promise<User>;
     invalidateSession(sessionId: string): Promise<void>;

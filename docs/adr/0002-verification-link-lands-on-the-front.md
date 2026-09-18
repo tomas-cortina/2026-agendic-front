@@ -1,6 +1,11 @@
 ---
-status: accepted
+status: superseded
 ---
+
+> **Superseded**: la verificación pasa a un código de 6 caracteres que el Usuario tipea a mano, no un link.
+> Ya no hay link que aterrizar en el front ni Route Handler que escriba la cookie de Sesión: la escribe la
+> server action `verifyEmail` en `app/(public)/(auth)/sign-up/actions.ts`. De paso, el endpoint correcto
+> siempre fue `POST /users/verification` (no `/users/verification/resend`, como decía este documento).
 
 # El Link de verificación apunta al front, no al back
 
