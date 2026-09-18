@@ -1,5 +1,5 @@
 ---
-status: accepted
+status: superseded by ADR 0003 — the link-based verification route handler is gone; Clerk's own prebuilt flow handles verification
 ---
 
 # El Link de verificación apunta al front, no al back

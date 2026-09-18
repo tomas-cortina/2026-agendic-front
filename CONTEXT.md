@@ -26,7 +26,7 @@ _Avoid_: recurso
 El conjunto de Empleados de un Negocio. Solo se usa en plural/colectivo.
 
 **Usuario**:
-Persona que verifica su email para obtener una Sesión. Puede ser Dueño de cero o más Negocios.
+Persona identificada por Agendic, con contraseña o con un Proveedor de identidad. Puede ser Dueño de cero o más Negocios.
 _Avoid_: cuenta, perfil
 
 **Dueño**:
@@ -44,12 +44,8 @@ _Avoid_: categoría, industria
 ### Acceso
 
 **Proveedor de identidad**:
-Servicio externo (Google, Microsoft) con el que un Usuario puede registrarse e iniciar sesión en vez de usar contraseña.
+Servicio externo (Google, Microsoft) con el que un Usuario puede registrarse e iniciar sesión.
 _Avoid_: provider, OAuth
-
-**Método de registro**:
-Cómo se registra un Usuario, derivado de su email: con un Proveedor de identidad o con contraseña.
-_Avoid_: sign-up method, tipo de cuenta
 
 **Registro pendiente**:
 Alta de un Usuario que todavía no verificó su email. No tiene Sesión.
@@ -68,12 +64,12 @@ Acción del Usuario de terminar su Sesión.
 _Avoid_: logout, log-out, desloguearse, salir
 
 **Verificar email**:
-Abrir el link enviado por email para probar que la dirección es real.
+Ingresar el Código de verificación recibido por email para probar que la dirección es real.
 _Avoid_: confirmar email
 
-**Link de verificación**:
-Link de un solo uso que Agendic manda por email. Al abrirlo, el Usuario queda con una Sesión abierta. Vence, y funciona en cualquier dispositivo, no solo en el que se registró.
-_Avoid_: link de confirmación, magic link
+**Código de verificación**:
+Código de un solo uso que el Proveedor de identidad manda por email para Verificar email. Al ingresarlo, el Usuario queda con una Sesión abierta. Vence.
+_Avoid_: link de verificación, link de confirmación, magic link
 
 ### Agenda
 
