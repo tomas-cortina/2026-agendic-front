@@ -7,11 +7,15 @@ import { CheckEmailStep } from './CheckEmailStep';
 import { DetailsStep } from './DetailsStep';
 import { EmailStep } from './EmailStep';
 import { ProviderRedirectStep } from './ProviderRedirectStep';
+import { VerificationErrorStep, type VerificationReason } from './VerificationErrorStep';
 
-// EmailStep, CheckEmailStep and ProviderRedirectStep are client components because this file
-// imports them; they take function props, so they must not become 'use client' entry points themselves.
-export function SignupForm() {
-    const [step, setStep] = useState<'email' | SignUpMethod | 'sent'>('email');
+// EmailStep, CheckEmailStep, ProviderRedirectStep and VerificationErrorStep are client components
+// because this file imports them; they take function props, so they must not become 'use client'
+// entry points themselves.
+export function SignupForm({ verificationReason }: { verificationReason?: VerificationReason }) {
+    const [step, setStep] = useState<'email' | SignUpMethod | 'sent' | VerificationReason>(
+        verificationReason ?? 'email',
+    );
     const [email, setEmail] = useState('');
     const [error, setError] = useState<string>();
     const [pending, startTransition] = useTransition();
@@ -24,6 +28,8 @@ export function SignupForm() {
             else setError(result.error);
         });
     }
+
+    if (step === 'expired' || step === 'invalid') return <VerificationErrorStep reason={step} />;
 
     if (step === 'sent') return <CheckEmailStep email={email} />;
 
