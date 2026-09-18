@@ -7,11 +7,6 @@ export const instrumentation: IInstrumentationService = { startSpan: (_options, 
 const notStubbed = (name: string) => () => Promise.reject(new Error(`${name} not stubbed`));
 
 export const authWith = (stubs: Partial<IAuthenticationService>): IAuthenticationService => ({
-    signUp: notStubbed('signUp'),
-    signIn: notStubbed('signIn'),
-    verifyEmail: notStubbed('verifyEmail'),
-    resendVerification: notStubbed('resendVerification'),
     getCurrentUser: notStubbed('getCurrentUser'),
-    invalidateSession: notStubbed('invalidateSession'),
     ...stubs,
 });

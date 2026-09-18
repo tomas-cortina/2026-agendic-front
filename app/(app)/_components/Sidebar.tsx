@@ -23,7 +23,7 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
 } from '@/app/_components/ui/dropdown-menu';
-import { signOut } from '@/app/(public)/(auth)/actions';
+import { SignOutButton } from '@/app/_components/SignOutButton';
 import { cn } from '@/app/_components/utils';
 import type { CurrentBusinessUser, NavItem, SectionId } from './types';
 
@@ -62,12 +62,12 @@ export function Sidebar({ user, navItems }: { user: CurrentBusinessUser; navItem
                             Configuración
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                            <form action={signOut} className="w-full">
-                                <button type="submit" className="flex w-full items-center gap-2 text-left">
+                            <SignOutButton>
+                                <button type="button" className="flex w-full items-center gap-2 text-left">
                                     <LogOut className="size-[15px]" />
                                     Cerrar sesión
                                 </button>
-                            </form>
+                            </SignOutButton>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -120,11 +120,11 @@ export function Sidebar({ user, navItems }: { user: CurrentBusinessUser; navItem
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side="top" align="start">
                         <DropdownMenuItem asChild>
-                            <form action={signOut} className="w-full">
-                                <button type="submit" className="w-full text-left">
+                            <SignOutButton>
+                                <button type="button" className="w-full text-left">
                                     Cerrar sesión
                                 </button>
-                            </form>
+                            </SignOutButton>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

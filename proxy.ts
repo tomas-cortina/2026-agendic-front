@@ -1,6 +1,13 @@
+// Next.js/Clerk wiring, not application code: clerkMiddleware() must run here for
+// auth()/currentUser() to work at all, so this is unavoidably a second server-side
+// import of the Clerk SDK alongside src/infrastructure/services/authentication.service.ts.
+import { clerkMiddleware } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { SIGN_IN_PATH, SIGNED_IN_HOME_PATH } from '@/app/routes';
 
+// Single place declaring which paths need a Sesión and which are the auth screens.
+// Optimistic check only (no session validation); the layouts do the authoritative
+// server-side verification (see docs/agents/clean-architecture.md).
 const protectedRoutes = [
     '/turnos',
     '/disponibilidad',
@@ -13,22 +20,21 @@ const protectedRoutes = [
 ];
 const authRoutes = ['/sign-in', '/sign-up'];
 
-// Optimistic check: only the cookie's presence, no session validation (recommended for Proxy, see Next.js authentication guide).
-export function proxy(request: NextRequest) {
+export default clerkMiddleware(async (auth, request) => {
     const { pathname } = request.nextUrl;
-    const hasSession = request.cookies.has('session');
+    const { userId } = await auth();
 
-    if (!hasSession && protectedRoutes.some((route) => pathname.startsWith(route))) {
-        return NextResponse.redirect(new URL('/sign-in', request.url));
+    if (!userId && protectedRoutes.some((route) => pathname.startsWith(route))) {
+        return NextResponse.redirect(new URL(SIGN_IN_PATH, request.url));
     }
 
-    if (hasSession && authRoutes.includes(pathname)) {
-        return NextResponse.redirect(new URL('/', request.url));
+    if (userId && authRoutes.includes(pathname)) {
+        return NextResponse.redirect(new URL(SIGNED_IN_HOME_PATH, request.url));
     }
 
     return NextResponse.next();
-}
+});
 
 export const config = {
-    matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
+    matcher: ['/((?!_next|.*\\..*).*)', '/(api|trpc)(.*)'],
 };

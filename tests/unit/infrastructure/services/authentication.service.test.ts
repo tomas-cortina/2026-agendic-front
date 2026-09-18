@@ -1,254 +1,47 @@
-import {
-    AuthenticationError,
-    EmailTakenError,
-    UnauthenticatedError,
-    VerificationLinkExpiredError,
-    VerificationLinkInvalidError,
-} from '@/src/entities/errors/auth';
-import { BackendValidationError } from '@/src/entities/errors/common';
+import { currentUser } from '@clerk/nextjs/server';
+import { UnauthenticatedError } from '@/src/entities/errors/auth';
 import { AuthenticationService } from '@/src/infrastructure/services/authentication.service';
 
-const API_BASE_URL = 'http://back.test';
-const authenticationService = new AuthenticationService(API_BASE_URL);
+jest.mock('@clerk/nextjs/server', () => ({ currentUser: jest.fn() }));
 
-const newUsuario = {
-    email: 'ana@negocio.com',
-    name: 'Ana Pérez',
-    password: 'correct horse battery',
-};
-const issuedSession = {
-    sessionId: 'session-123',
-    expiresAt: '2026-10-14T00:00:00.000Z',
-};
+const mockedCurrentUser = jest.mocked(currentUser);
+const authenticationService = new AuthenticationService();
 
-const backendResponds = (status: number, body?: unknown) =>
-    jest.spyOn(global, 'fetch').mockResolvedValue(
-        new Response(body === undefined ? null : JSON.stringify(body), {
-            status,
-        }),
-    );
+afterEach(() => jest.resetAllMocks());
 
-afterEach(() => jest.restoreAllMocks());
+const clerkUser = (overrides: Partial<{ firstName: string | null; lastName: string | null }> = {}) => ({
+    id: 'user_123',
+    primaryEmailAddressId: 'email_1',
+    emailAddresses: [{ id: 'email_1', emailAddress: 'ana@negocio.com' }],
+    firstName: 'Ana',
+    lastName: 'Pérez',
+    ...overrides,
+});
 
 describe('AuthenticationService', () => {
-    describe('signUp', () => {
-        it('POSTs the new Usuario to /users without parsing a response', async () => {
-            const fetchMock = backendResponds(201);
-
-            await expect(
-                authenticationService.signUp(newUsuario),
-            ).resolves.toBeUndefined();
-            expect(fetchMock).toHaveBeenCalledWith(
-                'http://back.test/users',
-                expect.objectContaining({
-                    method: 'POST',
-                    body: JSON.stringify(newUsuario),
-                }),
-            );
-        });
-
-        it('throws EmailTakenError when the back answers 409', async () => {
-            backendResponds(409, {
-                statusCode: 409,
-                message: 'Email already registered',
-            });
-
-            await expect(
-                authenticationService.signUp(newUsuario),
-            ).rejects.toBeInstanceOf(EmailTakenError);
-        });
-
-        it('throws BackendValidationError when the back rejects the input with 400', async () => {
-            backendResponds(400, {
-                statusCode: 400,
-                message: [
-                    'password must be longer than or equal to 12 characters',
-                ],
-            });
-
-            await expect(
-                authenticationService.signUp(newUsuario),
-            ).rejects.toBeInstanceOf(BackendValidationError);
-        });
-    });
-
-    describe('signIn', () => {
-        const credentials = {
-            email: newUsuario.email,
-            password: newUsuario.password,
-        };
-
-        it('POSTs the credentials to /sessions and returns the Sesión the back issued', async () => {
-            const fetchMock = backendResponds(201, issuedSession);
-
-            await expect(
-                authenticationService.signIn(credentials),
-            ).resolves.toEqual({
-                id: 'session-123',
-                expiresAt: new Date('2026-10-14T00:00:00.000Z'),
-            });
-            expect(fetchMock).toHaveBeenCalledWith(
-                'http://back.test/sessions',
-                expect.objectContaining({
-                    method: 'POST',
-                    body: JSON.stringify(credentials),
-                }),
-            );
-        });
-
-        it('throws AuthenticationError when the back answers 401', async () => {
-            backendResponds(401, {
-                statusCode: 401,
-                message: 'Invalid email or password',
-            });
-
-            await expect(
-                authenticationService.signIn(credentials),
-            ).rejects.toBeInstanceOf(AuthenticationError);
-        });
-    });
-
-    describe('verifyEmail', () => {
-        const token = 'verification-token-abc';
-
-        it('POSTs the token to /users/verification and returns the Sesión the back issued', async () => {
-            const fetchMock = backendResponds(201, issuedSession);
-
-            await expect(
-                authenticationService.verifyEmail(token),
-            ).resolves.toEqual({
-                id: 'session-123',
-                expiresAt: new Date('2026-10-14T00:00:00.000Z'),
-            });
-            expect(fetchMock).toHaveBeenCalledWith(
-                'http://back.test/users/verification',
-                expect.objectContaining({
-                    method: 'POST',
-                    body: JSON.stringify({ token }),
-                }),
-            );
-        });
-
-        it('throws VerificationLinkExpiredError when the back answers 410', async () => {
-            backendResponds(410, {
-                statusCode: 410,
-                message: 'Verification link expired',
-            });
-
-            await expect(
-                authenticationService.verifyEmail(token),
-            ).rejects.toBeInstanceOf(VerificationLinkExpiredError);
-        });
-
-        // Invalid, already used and tampered-with all arrive as 400: the Usuario reads the same message.
-        it('throws VerificationLinkInvalidError when the back answers 400', async () => {
-            backendResponds(400, {
-                statusCode: 400,
-                message: 'Invalid verification token',
-            });
-
-            await expect(
-                authenticationService.verifyEmail(token),
-            ).rejects.toBeInstanceOf(VerificationLinkInvalidError);
-        });
-
-        it('attaches the answer from the back as the cause', async () => {
-            backendResponds(410, {
-                statusCode: 410,
-                message: 'Verification link expired',
-            });
-
-            await expect(
-                authenticationService.verifyEmail(token),
-            ).rejects.toMatchObject({
-                cause: {
-                    statusCode: 410,
-                    message: 'Verification link expired',
-                },
-            });
-        });
-    });
-
-    describe('resendVerification', () => {
-        it('POSTs the email to /users/verification/resend and treats 202 as success', async () => {
-            const fetchMock = backendResponds(202);
-
-            await expect(
-                authenticationService.resendVerification(newUsuario.email),
-            ).resolves.toBeUndefined();
-            expect(fetchMock).toHaveBeenCalledWith(
-                'http://back.test/users/verification/resend',
-                expect.objectContaining({
-                    method: 'POST',
-                    body: JSON.stringify({ email: newUsuario.email }),
-                }),
-            );
-        });
-    });
-
     describe('getCurrentUser', () => {
-        it('GETs /users/me with the Sesión as a Bearer token and returns the Usuario', async () => {
-            const usuario = {
-                id: 7,
-                name: 'Ana Pérez',
+        it('returns the Usuario behind the Sesión', async () => {
+            mockedCurrentUser.mockResolvedValue(clerkUser() as never);
+
+            await expect(authenticationService.getCurrentUser()).resolves.toEqual({
+                id: 'user_123',
                 email: 'ana@negocio.com',
-                role: 'USER',
-            };
-            const fetchMock = backendResponds(200, usuario);
-
-            await expect(
-                authenticationService.getCurrentUser('session-123'),
-            ).resolves.toEqual(usuario);
-            expect(fetchMock).toHaveBeenCalledWith(
-                'http://back.test/users/me',
-                expect.objectContaining({
-                    method: 'GET',
-                    headers: expect.objectContaining({
-                        Authorization: 'Bearer session-123',
-                    }),
-                }),
-            );
-        });
-
-        it('throws UnauthenticatedError when the back answers 401', async () => {
-            backendResponds(401, {
-                statusCode: 401,
-                message: 'Missing, expired or signed-out session',
+                name: 'Ana Pérez',
             });
-
-            await expect(
-                authenticationService.getCurrentUser('session-123'),
-            ).rejects.toBeInstanceOf(UnauthenticatedError);
-        });
-    });
-
-    describe('invalidateSession', () => {
-        it('DELETEs /sessions/current with the Sesión as a Bearer token', async () => {
-            const fetchMock = backendResponds(204);
-
-            await expect(
-                authenticationService.invalidateSession('session-123'),
-            ).resolves.toBeUndefined();
-            expect(fetchMock).toHaveBeenCalledWith(
-                'http://back.test/sessions/current',
-                expect.objectContaining({
-                    method: 'DELETE',
-                    headers: expect.objectContaining({
-                        Authorization: 'Bearer session-123',
-                    }),
-                }),
-            );
         });
 
-        it('throws UnauthenticatedError when the back answers 401', async () => {
-            backendResponds(401, {
-                statusCode: 401,
-                message: 'Missing, expired or signed-out session',
+        it('throws UnauthenticatedError when there is no Sesión', async () => {
+            mockedCurrentUser.mockResolvedValue(null);
+
+            await expect(authenticationService.getCurrentUser()).rejects.toBeInstanceOf(UnauthenticatedError);
+        });
+
+        it('falls back to the email when the Usuario has no name', async () => {
+            mockedCurrentUser.mockResolvedValue(clerkUser({ firstName: null, lastName: null }) as never);
+
+            await expect(authenticationService.getCurrentUser()).resolves.toMatchObject({
+                name: 'ana@negocio.com',
             });
-
-            await expect(
-                authenticationService.invalidateSession('session-123'),
-            ).rejects.toBeInstanceOf(UnauthenticatedError);
         });
     });
 });

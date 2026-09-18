@@ -1,3 +1,5 @@
+import { ClerkProvider } from '@clerk/nextjs';
+import { esES } from '@clerk/localizations';
 import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
@@ -19,7 +21,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
             className={`${plusJakartaSans.className} h-full antialiased`}
         >
             <body className="min-h-full flex flex-col bg-white text-foreground">
-                {children}
+                <ClerkProvider localization={esES}>{children}</ClerkProvider>
             </body>
         </html>
     );

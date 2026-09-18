@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/app/(public)/(auth)/current-user';
+import { SIGN_IN_PATH } from '@/app/routes';
 import { Sidebar } from './_components/Sidebar';
 import { pendingCount } from './_components/mock-turnos';
 import type { NavItem } from './_components/types';
@@ -25,7 +26,7 @@ function initialsOf(name: string) {
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
     const user = await getCurrentUser();
-    if (!user) redirect('/sign-in');
+    if (!user) redirect(SIGN_IN_PATH);
 
     return (
         <div className="flex min-h-screen w-full bg-muted">

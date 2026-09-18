@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { signOut } from '@/app/(public)/(auth)/actions';
 import type { CurrentUser } from '@/app/(public)/(auth)/current-user';
 import { Button } from './ui/button';
+import { SignOutButton } from './SignOutButton';
 
 export function Header({ user }: { user: CurrentUser | null }) {
     return (
@@ -26,15 +26,15 @@ export function Header({ user }: { user: CurrentUser | null }) {
                         <span className="text-[15px] font-semibold text-foreground px-4 py-2.5">
                             {user.name}
                         </span>
-                        <form action={signOut}>
+                        <SignOutButton>
                             <Button
-                                type="submit"
+                                type="button"
                                 variant="ghost"
                                 className="text-[15px] font-semibold text-foreground px-4 py-2.5 hover:text-primary transition-colors h-auto"
                             >
                                 Cerrar sesión
                             </Button>
-                        </form>
+                        </SignOutButton>
                     </>
                 ) : (
                     <>
