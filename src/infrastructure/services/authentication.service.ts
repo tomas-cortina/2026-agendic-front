@@ -29,6 +29,11 @@ const invalidSessionErrors: ErrorsByStatus = {
             'Missing, expired or signed-out session',
             options,
         ),
+    404: (options) =>
+        new UnauthenticatedError(
+            'Missing, expired or signed-out session',
+            options,
+        ),
 };
 
 export class AuthenticationService implements IAuthenticationService {
