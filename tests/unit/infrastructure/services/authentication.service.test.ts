@@ -221,6 +221,17 @@ describe('AuthenticationService', () => {
                 authenticationService.getCurrentUser('session-123'),
             ).rejects.toBeInstanceOf(UnauthenticatedError);
         });
+
+        it('throws UnauthenticatedError when the back answers 404', async () => {
+            backendResponds(404, {
+                statusCode: 404,
+                message: 'Session not found',
+            });
+
+            await expect(
+                authenticationService.getCurrentUser('session-123'),
+            ).rejects.toBeInstanceOf(UnauthenticatedError);
+        });
     });
 
     describe('invalidateSession', () => {
@@ -245,6 +256,17 @@ describe('AuthenticationService', () => {
             backendResponds(401, {
                 statusCode: 401,
                 message: 'Missing, expired or signed-out session',
+            });
+
+            await expect(
+                authenticationService.invalidateSession('session-123'),
+            ).rejects.toBeInstanceOf(UnauthenticatedError);
+        });
+
+        it('throws UnauthenticatedError when the back answers 404', async () => {
+            backendResponds(404, {
+                statusCode: 404,
+                message: 'Session not found',
             });
 
             await expect(
