@@ -77,6 +77,6 @@ export interface ScheduleDetail {
 
 export interface CurrentBusinessUser {
     name: string;
-    role: string;
     initials: string;
+    imageUrl?: string;
 }

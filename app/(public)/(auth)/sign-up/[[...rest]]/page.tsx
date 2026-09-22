@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function SignUpPage() {
     return (
         <ViewTransition enter="auth-in" exit="auth-out" default="none">
-            <div className="flex-1 flex items-center justify-center w-[640px] max-w-full p-12">
+            <div className="flex items-center justify-center w-[640px] max-w-full">
                 <SignUp appearance={clerkAppearance} />
             </div>
         </ViewTransition>

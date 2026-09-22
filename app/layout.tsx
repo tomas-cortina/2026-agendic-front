@@ -20,7 +20,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
             lang="es"
             className={`${plusJakartaSans.className} h-full antialiased`}
         >
-            <body className="min-h-full flex flex-col bg-white text-foreground">
+            <body className="min-h-dvh flex flex-col bg-white text-foreground">
                 <ClerkProvider localization={clerkLocalization}>{children}</ClerkProvider>
             </body>
         </html>

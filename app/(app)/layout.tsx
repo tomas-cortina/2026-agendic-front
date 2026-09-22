@@ -31,7 +31,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     return (
         <div className="flex min-h-screen w-full bg-muted">
             <Sidebar
-                user={{ name: user.name, role: 'Dueña', initials: initialsOf(user.name) }}
+                user={{ name: user.name, initials: initialsOf(user.name), imageUrl: user.imageUrl }}
                 navItems={navItems}
             />
             <main className="flex min-w-0 flex-1 flex-col">{children}</main>

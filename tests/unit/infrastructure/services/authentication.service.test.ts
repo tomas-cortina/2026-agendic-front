@@ -9,12 +9,16 @@ const authenticationService = new AuthenticationService();
 
 afterEach(() => jest.resetAllMocks());
 
-const clerkUser = (overrides: Partial<{ firstName: string | null; lastName: string | null }> = {}) => ({
+const clerkUser = (
+    overrides: Partial<{ firstName: string | null; lastName: string | null; hasImage: boolean; imageUrl: string }> = {},
+) => ({
     id: 'user_123',
     primaryEmailAddressId: 'email_1',
     emailAddresses: [{ id: 'email_1', emailAddress: 'ana@negocio.com' }],
     firstName: 'Ana',
     lastName: 'Pérez',
+    hasImage: false,
+    imageUrl: 'https://img.clerk.com/placeholder',
     ...overrides,
 });
 
@@ -42,6 +46,31 @@ describe('AuthenticationService', () => {
             await expect(authenticationService.getCurrentUser()).resolves.toMatchObject({
                 name: 'ana@negocio.com',
             });
+        });
+
+        it('returns the photo when the Usuario has one (e.g. from Google)', async () => {
+            mockedCurrentUser.mockResolvedValue(
+                clerkUser({ hasImage: true, imageUrl: 'https://img.clerk.com/google-photo' }) as never,
+            );
+
+            await expect(authenticationService.getCurrentUser()).resolves.toMatchObject({
+                imageUrl: 'https://img.clerk.com/google-photo',
+            });
+        });
+
+        it('omits the photo when Clerk only has its placeholder', async () => {
+            mockedCurrentUser.mockResolvedValue(clerkUser() as never);
+
+            const user = await authenticationService.getCurrentUser();
+            expect(user.imageUrl).toBeUndefined();
+        });
+
+        it('drops an unusable photo URL instead of failing the whole Usuario', async () => {
+            mockedCurrentUser.mockResolvedValue(clerkUser({ hasImage: true, imageUrl: 'not a url' }) as never);
+
+            const user = await authenticationService.getCurrentUser();
+            expect(user).toMatchObject({ name: 'Ana Pérez', email: 'ana@negocio.com' });
+            expect(user.imageUrl).toBeUndefined();
         });
     });
 });

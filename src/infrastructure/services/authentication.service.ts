@@ -12,6 +12,10 @@ export class AuthenticationService implements IAuthenticationService {
         const email = clerkUser.emailAddresses.find((e) => e.id === clerkUser.primaryEmailAddressId)?.emailAddress ?? '';
         const name = [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(' ').trim() || email;
 
-        return userSchema.parse({ id: clerkUser.id, email, name });
+        // hasImage is false when Clerk would only serve its generated placeholder. The photo is
+        // cosmetic, so an unparseable URL is dropped rather than failing the whole Usuario.
+        const imageUrl = clerkUser.hasImage && URL.canParse(clerkUser.imageUrl) ? clerkUser.imageUrl : undefined;
+
+        return userSchema.parse({ id: clerkUser.id, email, name, imageUrl });
     }
 }

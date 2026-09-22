@@ -2,14 +2,20 @@ import { UnauthenticatedError } from '@/src/entities/errors/auth';
 import { getCurrentUserController } from '@/src/interface-adapters/controllers/auth/get-current-user.controller';
 import { authWith, instrumentation } from '@/tests/unit/stubs';
 
-const usuario = { id: 'user_123', name: 'Ana Pérez', email: 'ana@negocio.com' };
+const usuario = {
+    id: 'user_123',
+    name: 'Ana Pérez',
+    email: 'ana@negocio.com',
+    imageUrl: 'https://img.clerk.com/ana',
+};
 
 describe('getCurrentUserController', () => {
-    it('returns the name of the Usuario behind the Sesión', async () => {
+    it('returns the name and photo of the Usuario behind the Sesión', async () => {
         const getCurrentUser = jest.fn().mockResolvedValue(usuario);
 
         await expect(getCurrentUserController(instrumentation, authWith({ getCurrentUser }))()).resolves.toEqual({
             name: 'Ana Pérez',
+            imageUrl: 'https://img.clerk.com/ana',
         });
     });
 

@@ -1,14 +1,15 @@
 import Link from 'next/link';
 import type { CurrentUser } from '@/app/(public)/(auth)/current-user';
 import { Button } from './ui/button';
+import { Logo } from './Logo';
 import { SignOutButton } from './SignOutButton';
 
 export function Header({ user }: { user: CurrentUser | null }) {
     return (
         <header className="flex items-center justify-between px-16 py-5">
-            <div className="text-[22px] font-extrabold tracking-[-0.02em] text-foreground">
-                agendic<span className="text-primary">.</span>
-            </div>
+            <Link href="/">
+                <Logo />
+            </Link>
             <nav className="flex gap-8 text-[15px] font-medium text-foreground">
                 <Link href="#" className="hover:text-primary transition-colors">
                     Funcionalidades
