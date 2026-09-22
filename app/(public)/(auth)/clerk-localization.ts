@@ -6,7 +6,7 @@ export const clerkLocalization: typeof esES = {
         ...esES.signIn,
         start: {
             ...esES.signIn?.start,
-            title: 'Iniciar sesión',
+            title: 'Iniciar sesión en agendic',
             subtitle: 'Entrá al panel de tu negocio.',
             actionText: '¿No tenés cuenta?',
             actionLink: 'Empezá gratis',
@@ -16,7 +16,7 @@ export const clerkLocalization: typeof esES = {
         ...esES.signUp,
         start: {
             ...esES.signUp?.start,
-            title: 'Creá tu cuenta gratis',
+            title: 'Creá tu cuenta agendic',
             subtitle: 'No necesitás tarjeta. Ampliás cuando quieras.',
             actionText: '¿Ya tenés una cuenta en Agendic?',
             actionLink: 'Iniciar sesión',

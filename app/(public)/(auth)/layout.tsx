@@ -1,5 +1,4 @@
 import { ViewTransition } from 'react';
-import { Card } from '@/app/_components/ui/card';
 
 export default function AuthLayout({
     children,
@@ -19,9 +18,7 @@ export default function AuthLayout({
                     update={{ 'auth-nav': 'auth-morph', default: 'none' }}
                     default="none"
                 >
-                    <Card className="min-w-0 min-h-[640px]max-w-[1100px] p-0 gap-0 ring-0 rounded-2xl shadow-[0_30px_70px_rgba(15,27,45,0.18)] overflow-hidden">
-                        {children}
-                    </Card>
+                    {children}
                 </ViewTransition>
             </div>
         </main>

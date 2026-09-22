@@ -4,6 +4,21 @@ import type { SignIn } from '@clerk/nextjs';
 type Appearance = NonNullable<ComponentProps<typeof SignIn>['appearance']>;
 
 export const clerkAppearance: Appearance = {
+    options: {
+        unsafe_disableDevelopmentModeWarnings: true,
+        socialButtonsPlacement: 'bottom',
+    },
+    variables: {
+        colorPrimary: '#0f1b2d',
+        colorPrimaryForeground: '#ffffff',
+        colorForeground: '#0f1b2d',
+        colorMutedForeground: '#4b5567',
+        colorBorder: '#e6e9f0',
+        colorInput: '#e6e9f0',
+        colorBackground: '#ffffff',
+        colorDanger: '#dc2626',
+        colorShadow: 'transparent',
+    },
     elements: {
         rootBox: 'w-full',
         cardBox: 'w-full border-0 shadow-none rounded-none',
