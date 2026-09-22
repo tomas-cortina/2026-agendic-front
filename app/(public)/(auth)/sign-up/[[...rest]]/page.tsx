@@ -1,7 +1,7 @@
 import { SignUp } from '@clerk/nextjs';
 import type { Metadata } from 'next';
 import { ViewTransition } from 'react';
-import { clerkAppearance } from '../clerk-appearance';
+import { clerkAppearance } from '../../clerk-appearance';
 
 export const metadata: Metadata = {
     title: 'Crear cuenta — Agendic',

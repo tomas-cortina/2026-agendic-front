@@ -1,10 +1,15 @@
+import { redirect } from 'next/navigation';
 import { ViewTransition } from 'react';
+import { getCurrentUser } from './current-user';
 
-export default function AuthLayout({
+export default async function AuthLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const user = await getCurrentUser();
+    if (user) redirect('/turnos');
+
     return (
         <main className="flex-1 flex items-center justify-center px-6 py-10">
             <div
